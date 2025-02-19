@@ -63,7 +63,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+      <div className="flex flex-col items-center justify-center min-h-1/2 bg-gray-100 p-4 my-20">
         <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6">
           <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">Register</h2>
           <form onSubmit={handleSubmit} className="space-y-4">

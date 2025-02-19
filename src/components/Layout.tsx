@@ -12,7 +12,7 @@ const Layout = () => {
         </div>
       </div>
     </header>
-    <main className="container mx-auto p-4 bg-gray-100 rounded-lg shadow-lg mt-4">
+    <main className="container mx-auto p-4 bg-gray-100 rounded-lg shadow-lg mt-4 h-full">
       <Outlet />
     </main>
     <footer className="bg-gray-800 text-white text-center p-4 fixed bottom-0 w-full z-10 inset-x-0">

@@ -21,14 +21,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleRegister }) => {
   const {handleSubmit, handleInputChange, inputs} = useForm(doSubmit, initValues);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6">
+    <div className="flex flex-col items-center justify-center min-h-1/2 bg-gray-100 my-20">
+      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-10">
         <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">Login</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 ">
           <input
             type="email"
             name="email"
             placeholder="Email"
+            autoComplete="email"
             value={inputs.email}
             onChange={handleInputChange}
             required
