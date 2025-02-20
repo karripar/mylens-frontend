@@ -17,9 +17,10 @@ const ProfilePage = () => {
 };
 
 const App = () => {
+
   return (
     <>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <UserProvider>
         <Routes>
           <Route element={<Layout />}>

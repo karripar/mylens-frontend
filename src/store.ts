@@ -1,0 +1,38 @@
+import { Comment } from "hybrid-types/DBTypes";
+import { create } from "zustand";
+
+// Define the store type for comments
+type CommentStore = {
+  comments: Partial<Comment & {username: string}>[];
+  setComments: (comments: Partial<Comment & {username: string}>[]) => void;
+  addComment: (comment: Partial<Comment & {username: string}>) => void;
+  deleteComment: (comment_id: number) => void;
+};
+
+export const useCommentStore = create<CommentStore>((set) => ({ // Create a store for comments
+  comments: [],
+  setComments: (comments) =>
+    set(() => ({
+    comments: comments,
+  })),
+  addComment: (comment) =>
+    set((state) => ({
+      comments: [
+        ...state.comments,
+        {
+          comment_id: state.comments.length + 1,
+          comment_text: comment.comment_text,
+          user_id: comment.user_id,
+          media_id: comment.media_id,
+          created_at: new Date(),
+          username: comment.username,
+          reference_comment_id: comment.reference_comment_id, // Optional field for replies
+        },
+      ],
+    })),
+  deleteComment: (comment_id) =>
+    set((state) => ({
+      comments: state.comments.filter((comment) => comment.comment_id !== comment_id),
+    }),
+  ),
+}));

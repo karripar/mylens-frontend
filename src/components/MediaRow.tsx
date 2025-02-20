@@ -11,16 +11,16 @@ const MediaRow = (props: MediaRowProps) => {
   const {item} = props;
   const {user} = useUserContext();
   const navigate = useNavigate();
-
+  console.log(item.thumbnail);
   return (
-    <article className="flex flex-col items-center text-center h-full w-full bg-stone-900 p-6 rounded-2xl shadow-xl max-w-md mx-auto transition-transform duration-300 hover:scale-105">
+    <article className="flex flex-col items-center h-full w-full bg-gray-950 p-6 rounded-lg shadow-md max-w-lg mx-auto space-y-4 mb-3">
       {/* Image Wrapper */}
-      <div className="w-full h-60 max-w-[320px] rounded-xl overflow-hidden shadow-lg group hover:scale-105 transition-transform duration-300">
+      <div className="w-full h-60 max-w-[320px] overflow-hidden rounded-lg shadow-md group">
         <img
           onClick={() => navigate('/single', {state: {item}})}
-          className="h-full w-full object-cover rounded-xl cursor-pointer group-hover:opacity-80 transition-opacity duration-300"
+          className="h-full w-full object-cover rounded-lg cursor-pointer transition-transform duration-300 ease-in-out hover:scale-105"
           src={
-            item.thumbnail ||
+            item.filename ||
             (item.screenshots && item.screenshots[0]) ||
             undefined
           }
@@ -29,47 +29,39 @@ const MediaRow = (props: MediaRowProps) => {
       </div>
 
       {/* Info Section */}
-      <div className="flex flex-col items-center justify-center mt-4 w-full p-4 rounded-lg bg-stone-800 shadow-lg">
-        <p className="text-xl font-semibold text-amber-400 break-words mb-3">
-          {item.title}
+      <div className="w-full text-center">
+        <h2 className="text-lg font-semibold text-white">{item.title}</h2>
+        <p className="text-sm text-gray-400">
+          📅 {new Date(item.created_at).toLocaleString('fi-FI')}
         </p>
-
-        {/* Metadata */}
-        <div className="w-full bg-stone-700 p-3 rounded-lg text-center space-y-1">
-          <p className="text-amber-100 text-xs opacity-80">
-            📅 {new Date(item.created_at).toLocaleString('fi-FI')}
-          </p>
-          <p className="text-amber-100 text-xs font-medium">
-            👤 {item.username}
-          </p>
-        </div>
+        <p className="text-sm text-gray-400">👤 {item.username}</p>
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col items-center justify-center gap-4 w-full mt-5">
+      <div className="w-1/2 flex flex-col gap-3">
         <Link
           to={'/single'}
           state={{item}}
-          className="w-full bg-amber-500 text-stone-900 font-semibold py-3 rounded-lg hover:bg-amber-600 transition-colors duration-300"
+          className="w-full bg-amber-500 text-gray-900 font-semibold py-2 rounded-md text-center hover:bg-amber-600 transition-all duration-300"
         >
-          View Details
+          View
         </Link>
 
         {(user?.user_id === item.user_id || user?.level_name === 'Admin') && (
-          <>
+          <div className="flex w-full gap-2">
             <button
               onClick={() => console.log('Modify clicked', item.media_id)}
-              className="w-full bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+              className="flex-1 bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition-all duration-300"
             >
               Modify
             </button>
             <button
               onClick={() => console.log('Delete clicked', item.media_id)}
-              className="w-full bg-red-500 text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition-colors duration-300"
+              className="flex-1 bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 transition-all duration-300"
             >
               Delete
             </button>
-          </>
+          </div>
         )}
       </div>
     </article>

@@ -26,4 +26,8 @@ const formatFileSize = (size: number) => {
   return (size / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
 };
 
-export {fetchData, formatFileSize};
+const formatDate = (date: string, lang: string) => {
+  return new Date(date).toLocaleString(lang);
+}
+
+export {fetchData, formatFileSize, formatDate};

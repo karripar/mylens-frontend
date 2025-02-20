@@ -23,14 +23,20 @@ const useMedia = () => {
     const getMedia = async () => {
       try {
         // kaikki mediat ilman omistajan tietoja
+        const options = {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token') || '',
+            'Content-Type': 'application/json',
+          },
+        }
         const media = await fetchData<MediaItem[]>(
-          import.meta.env.VITE_MEDIA_API + '/media',
+          import.meta.env.VITE_MEDIA_API + '/media', options,
         );
         // haetaan omistajat id:n perusteella
         const mediaWithOwner: MediaItemWithOwner[] = await Promise.all(
           media.map(async (item) => {
             const owner = await fetchData<UserWithNoPassword>(
-              import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
+              import.meta.env.VITE_AUTH_API + '/users/' + item.user_id, options,
             );
 
             const mediaItem: MediaItemWithOwner = {
@@ -205,6 +211,7 @@ const useComment = () => {
   const postComment = async (
     comment_text: string,
     media_id: number,
+    reference_comment_id: number | null,
     token: string,
   ) => {
     try {
@@ -214,7 +221,7 @@ const useComment = () => {
           Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({comment_text, media_id}),
+        body: JSON.stringify({comment_text, media_id, reference_comment_id}),
       };
       const response = await fetchData<MessageResponse>(
         import.meta.env.VITE_MEDIA_API + '/comments',
