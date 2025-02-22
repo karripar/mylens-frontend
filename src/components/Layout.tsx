@@ -7,12 +7,12 @@ const Layout = () => {
     <>
     <header>
       <div>
-        <h1>WildLens</h1>
+      <h1 className="mb-2 text-xl font-extrabold text-gray-900 dark:text-white md:text-4xl lg:text-5xl"><span className="text-transparent bg-clip-text bg-gradient-to-r to-pink-600 from-sky-400">Wild</span>Lens</h1>
         <div>
         </div>
       </div>
     </header>
-    <main className="container mx-auto p-4 bg-gray-100 rounded-lg shadow-lg mt-4 h-full">
+    <main className="container mx-auto p-2 bg-gray-900 rounded-lg shadow-lg mt-4 h-full">
       <Outlet />
     </main>
     <footer className="bg-gray-800 text-white text-center p-4 fixed bottom-0 w-full z-10 inset-x-0">

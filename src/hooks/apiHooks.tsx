@@ -309,7 +309,7 @@ const useLike = () => {
           Authorization: 'Bearer ' + token,
         },
       };
-      const response = await fetchData<Like[]>(
+      const response = await fetchData<Like>(
         import.meta.env.VITE_MEDIA_API + '/likes/bymedia/user/' + media_id,
         options,
       );

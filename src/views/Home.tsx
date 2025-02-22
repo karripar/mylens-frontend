@@ -42,7 +42,7 @@ const Home = () => {
           )}
         </div>
 
-        <div className="w-full max-w-lg h-full p-4 rounded-md">
+        <div className="w-full max-w-lg h-full p-2 rounded-md">
           {activeFeed === 'normal' ? (
             <>
               {selectedItem && (
