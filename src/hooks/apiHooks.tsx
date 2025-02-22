@@ -1,4 +1,4 @@
-import {Comment} from 'hybrid-types/DBTypes';
+import {Comment, Follow} from 'hybrid-types/DBTypes';
 import {
   Like,
   MediaItem,
@@ -56,6 +56,7 @@ const useMedia = () => {
     };
 
     getMedia();
+
   }, []);
 
   const postMedia = async (
@@ -322,6 +323,62 @@ const useLike = () => {
   return {postLike, removeLike, getCountByMediaId, getUserLike};
 };
 
+const useFollow = () => {
+  const [followArray, setFollowArray] = useState<Follow[]>([]);
+
+  const postFollow = async (user_id: number, token: string) => {
+    try {
+      const options = {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({user_id}),
+      };
+      return await fetchData<Follow>(
+        import.meta.env.VITE_MEDIA_API + '/follows',
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  const removeFollow = async (follow_id: number, token: string) => {
+    try {
+      const options = {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      const response = await fetchData<MessageResponse>(
+        import.meta.env.VITE_MEDIA_API + '/follows/' + follow_id,
+        options,
+      );
+      return response;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  const getFollowedUsers = async (user_id: number) => {
+    try {
+      const response = await fetchData<Follow[]>(
+        import.meta.env.VITE_MEDIA_API + '/follows/byuser/' + user_id,
+      );
+      setFollowArray(response);
+      return response;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  return { followArray ,postFollow, removeFollow, getFollowedUsers};
+}
+
+
 export {
   useMedia,
   useFile,
@@ -329,4 +386,5 @@ export {
   useUser,
   useComment,
   useLike,
+  useFollow,
 };

@@ -1,9 +1,8 @@
 import {MediaItemWithOwner} from 'hybrid-types/DBTypes';
 import {useNavigate} from 'react-router-dom';
 import useUserContext from '../hooks/contextHooks';
-import { MessageCircle } from 'lucide-react';
+import {MessageCircle} from 'lucide-react';
 import Likes from './Likes';
-
 
 type MediaRowProps = {
   item: MediaItemWithOwner;
@@ -15,6 +14,7 @@ const MediaRow = (props: MediaRowProps) => {
   const {user} = useUserContext();
   const navigate = useNavigate();
   console.log(item.thumbnail);
+
   return (
     <article className="flex flex-col w-full max-w-lg bg-gray-800 p-4 rounded-lg shadow-lg mx-auto my-3 space-y-3">
       {/* User Info */}
@@ -23,7 +23,7 @@ const MediaRow = (props: MediaRowProps) => {
         <div className="text-left">
           <p className="text-white font-semibold">{item.username}</p>
           <p className="text-xs text-gray-400">
-            {new Date(item.created_at).toLocaleString("fi-FI")}
+            {new Date(item.created_at).toLocaleString('fi-FI')}
           </p>
         </div>
       </div>
@@ -31,7 +31,7 @@ const MediaRow = (props: MediaRowProps) => {
       {/* Image */}
       <div className="w-full h-90 bg-gray-800 overflow-hidden rounded-md">
         <img
-          onClick={() => navigate("/single", { state: { item } })}
+          onClick={() => navigate('/single', {state: {item}})}
           className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
           src={
             item.filename ||
@@ -55,16 +55,16 @@ const MediaRow = (props: MediaRowProps) => {
       </div>
 
       {/* Admin Actions */}
-      {(user?.user_id === item.user_id || user?.level_name === "Admin") && (
+      {(user?.user_id === item.user_id || user?.level_name === 'Admin') && (
         <div className="flex gap-2 pt-2">
           <button
-            onClick={() => console.log("Modify clicked", item.media_id)}
+            onClick={() => console.log('Modify clicked', item.media_id)}
             className="flex-1 bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition-all duration-300"
           >
             Modify
           </button>
           <button
-            onClick={() => console.log("Delete clicked", item.media_id)}
+            onClick={() => console.log('Delete clicked', item.media_id)}
             className="flex-1 bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 transition-all duration-300"
           >
             Delete

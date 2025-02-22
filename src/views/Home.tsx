@@ -1,7 +1,7 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import useUserContext from '../hooks/contextHooks';
-import { useMedia } from '../hooks/apiHooks';
-import { MediaItemWithOwner } from 'hybrid-types/DBTypes';
+import { useFollow, useMedia } from '../hooks/apiHooks';
+import { Follow, MediaItemWithOwner } from 'hybrid-types/DBTypes';
 import MediaRow from '../components/MediaRow';
 import SingleView from '../components/SingleView';
 
@@ -10,10 +10,46 @@ const Home = () => {
     'normal',
   );
   const {user} = useUserContext();
+  const {getFollowedUsers} = useFollow();
+  const [followedMedia, setMedia] = useState<MediaItemWithOwner[]>([]);
   const [selectedItem, setSelectedItem] = useState<
     MediaItemWithOwner | undefined
   >(undefined);
   const {mediaArray} = useMedia();
+
+  useEffect(() => {
+    const fetchFollowed = async () => {
+      if (!user) return;  // If no user is logged in, do nothing
+
+      try {
+        // Get the list of users that the logged-in user is following
+        const followedUsers = await getFollowedUsers(user.user_id);
+        console.log('Followed Users:', followedUsers); // Log followed users
+
+        // Extract followed user IDs
+        const followedIds = followedUsers.map((follow: Follow) => follow.followed_id);
+        console.log('Followed IDs:', followedIds);  // Log followed IDs
+
+        // Filter the mediaArray to only include media from followed users
+        const followedMedia = mediaArray.filter((media) => followedIds.includes(media.user_id));
+        console.log('Followed media:', followedMedia); // Log followed media
+
+        // Set the filtered media as the new followed media
+        setMedia(followedMedia);
+      } catch (error) {
+        console.error('Error fetching followed users:', error);
+      }
+    };
+
+    // Only fetch followed media when the feed is 'following' and we have a valid user
+    if (activeFeed === 'following' && user) {
+      fetchFollowed();
+    } else {
+      setMedia([]);  // Clear followed media when switching to the normal feed
+    }
+
+    // Ensure this effect is triggered when the feed or user changes
+  }, [activeFeed, user, mediaArray]);  // Dependencies include activeFeed, user, and mediaArray
 
   return (
     <>
@@ -59,7 +95,18 @@ const Home = () => {
           ) : (
             <>
               {user ? (
-                <div>Following Feed</div>
+                <div className="w-full max-w-lg h-full p-2 rounded-md">
+                  <section>
+                    {selectedItem && (
+                      <SingleView item={selectedItem} setSelectedItem={setSelectedItem} />
+                    )}
+                    {followedMedia.map((item) => (
+                      <div key={item.media_id}>
+                        <MediaRow item={item} setSelectedItem={setSelectedItem} />
+                      </div>
+                    ))}
+                  </section>
+                </div>
               ) : (
                 <div>Please log in to see the Following feed</div>
               )}

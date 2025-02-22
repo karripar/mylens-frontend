@@ -40,11 +40,10 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
 
     try {
       const userLike = await getUserLike(item.media_id, token);
-      console.log('userLike', getLikes);
       likeDispatch({type: 'like', like: userLike})
     } catch (error) {
       likeDispatch({type: 'like', like: null});
-      console.error((error as Error).message);
+      console.log((error as Error).message);
     }
   }
 
@@ -54,7 +53,7 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
       if (!likes) return;
       likeDispatch({type: 'setLikeCount', count: likes.length});
     } catch (error) {
-      console.error((error as Error).message);
+      console.log((error as Error).message);
     }
   }
 
@@ -86,7 +85,7 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
 
 return (
   <>
-  <p className="text-gray-100">Likes: {likeState.count}</p>
+  <p className="text-gray-100">{likeState.count}</p>
   <button onClick={handleLike}>
     <Heart
       className={`w-6 h-6 text-gray-400 bg-none cursor-pointer ${

@@ -1,14 +1,60 @@
-import { useMedia } from "../hooks/apiHooks";
+import { useEffect, useState } from "react";
 import useUserContext from "../hooks/contextHooks"
 import { useNavigate } from "react-router-dom";
+import { MediaItemWithOwner, UserWithNoPassword } from "hybrid-types/DBTypes";
+import { fetchData } from "../lib/functions";
 
 
 const Profile = () => {
   const {user} = useUserContext();
-  const {mediaArray} = useMedia();
   const navigate = useNavigate();
+  const [userMedia, setUserMedia] = useState<MediaItemWithOwner[]>([]);
 
-  const userMediaArray = mediaArray.filter((item) => item.user_id === user?.user_id);
+  useEffect(() => {
+    const fetchUserMedia = async () => {
+      if (!user) return; // If no user is logged in, don't fetch media
+
+      const token = localStorage.getItem('token');
+      if (!token) return; // Make sure the user is authenticated
+
+      try {
+        // Fetch media specific to the logged-in user
+        const options = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        };
+
+        // Fetch user media from the server (assuming /media/byuser is the endpoint)
+        const userMedia = await fetchData<MediaItemWithOwner[]>(
+          import.meta.env.VITE_MEDIA_API + '/media/bytoken',
+          options
+        );
+
+        // Fetch the owner info for each piece of media
+        const userMediaWithOwner: MediaItemWithOwner[] = await Promise.all(
+          userMedia.map(async (item: MediaItemWithOwner) => {
+            const owner = await fetchData<UserWithNoPassword>(
+              import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
+              options
+            );
+
+            return { ...item, username: owner.username };
+          })
+        );
+
+        // Set the media to state
+        setUserMedia(userMediaWithOwner);
+      } catch (error) {
+        console.error('Error fetching user media:', (error as Error).message);
+      }
+    };
+
+    fetchUserMedia();
+  }, [user]); // Refetch when the user context changes
+
+
   return (
     <>
     <div className="flex flex-col items-center justify-center min-h-1/2 bg-gray-900 p-4 my-20">
@@ -48,14 +94,14 @@ const Profile = () => {
         </div>
       </div>
     </div>
-    <div>
+    <div className="flex flex-col justify-center min-h-1/2 bg-gray-900 p-4 my-20">
       <h2 className="text-2xl font-semibold text-gray-400 text-center mb-6">Your uploads</h2>
-      <div className="flex flex-wrap justify-center">
-        {userMediaArray.map((item) => (
+      <div className="flex flex-wrap items-start justify-center">
+        {userMedia.map((item) => (
           <div key={item.media_id} className="m-2">
             <img
               onClick={() => navigate("/single", { state: { item } })}
-              className="w-64 h-64 object-cover rounded-lg cursor-pointer transition-transform duration-300 hover:scale-105"
+              className="w-64 h-64 object-cover rounded-lg cursor-pointer transition-transform duration-300 hover:scale-101"
               src={item.filename || (item.screenshots && item.screenshots[0]) || undefined}
               alt={item.title}
             />

@@ -1,7 +1,7 @@
 import {useEffect, useRef} from 'react';
 import useUserContext from '../hooks/contextHooks';
 import {useForm} from '../hooks/formHooks';
-import {useCommentStore} from '../store';
+import {useCommentStore} from '../stores/likeStore';
 import {MediaItemWithOwner} from 'hybrid-types/DBTypes';
 import {useComment} from '../hooks/apiHooks';
 import {formatDate} from '../lib/functions';
