@@ -175,11 +175,11 @@ const Upload = () => {
   <>
   <div className="flex h-3/4 my-10 items-center justify-center ">
     <div className="w-full max-w-lg rounded-2xl p-8 shadow-xl backdrop-blur-md">
-      <h1 className="mb-6 text-center text-4xl font-bold text-gray-800">
+      <h1 className="mb-6 text-center text-4xl font-bold text-gray-200">
         Please log in to upload media
       </h1>
       <div className="flex justify-center">
-        <p className="text-center text-lg text-gray-500">
+        <p className="text-center text-lg text-gray-300">
           To upload your content, please log in to your account. <br />
           New here? <span className="text-amber-400">Sign up</span> today!
         </p>

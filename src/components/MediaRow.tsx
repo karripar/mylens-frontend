@@ -26,6 +26,13 @@ const MediaRow = (props: MediaRowProps) => {
             {new Date(item.created_at).toLocaleString('fi-FI')}
           </p>
         </div>
+        <div className="ml-auto">
+          {user && user.user_id !== item.user_id && (
+            <button className="text-white font-semibold bg-blue-500 px-2 py-1 rounded-md hover:bg-blue-600 transition-all duration-300">
+              Follow
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Image */}
@@ -44,12 +51,16 @@ const MediaRow = (props: MediaRowProps) => {
 
       {/* Actions */}
       <div className="flex items-center justify-items-start space-x-3 w-full px-2">
-        <Likes item={item} />
-        <MessageCircle className="w-6 h-6 text-gray-400" />
+        <Likes aria-label="like the post" item={item} />
+        <MessageCircle
+          aria-label="comment"
+          className="w-6 h-6 text-gray-400 cursor-pointer hover:opacity-85 "
+          onClick={() => navigate('/single', {state: {item}})}
+        />
       </div>
 
       {/* Caption */}
-      <div className="text-white text-sm px-2 text-left">
+      <div className="text-white text-sm px-2 text-left bg-gray-900 p-2 rounded-md">
         <h4 className="font-semibold my-0.5 ">{item.title}</h4>
         <p>{item.description}</p>
       </div>
