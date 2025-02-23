@@ -11,7 +11,7 @@ const Logout = () => {
 
   return (
     <div>
-      <h1>Logout</h1>
+      <span>Logout</span>
     </div>
   );
 }

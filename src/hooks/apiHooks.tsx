@@ -28,15 +28,17 @@ const useMedia = () => {
             Authorization: 'Bearer ' + localStorage.getItem('token') || '',
             'Content-Type': 'application/json',
           },
-        }
+        };
         const media = await fetchData<MediaItem[]>(
-          import.meta.env.VITE_MEDIA_API + '/media', options,
+          import.meta.env.VITE_MEDIA_API + '/media',
+          options,
         );
         // haetaan omistajat id:n perusteella
         const mediaWithOwner: MediaItemWithOwner[] = await Promise.all(
           media.map(async (item) => {
             const owner = await fetchData<UserWithNoPassword>(
-              import.meta.env.VITE_AUTH_API + '/users/' + item.user_id, options,
+              import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
+              options,
             );
 
             const mediaItem: MediaItemWithOwner = {
@@ -56,7 +58,6 @@ const useMedia = () => {
     };
 
     getMedia();
-
   }, []);
 
   const postMedia = async (
@@ -66,7 +67,12 @@ const useMedia = () => {
   ) => {
     const media: Omit<
       MediaItem,
-      'media_id' | 'user_id' | 'thumbnail' | 'created_at' | 'screenshots' | 'coordinates_id'
+      | 'media_id'
+      | 'user_id'
+      | 'thumbnail'
+      | 'created_at'
+      | 'screenshots'
+      | 'coordinates_id'
     > = {
       title: inputs.title,
       description: inputs.description,
@@ -125,6 +131,11 @@ const useAuthentication = () => {
         import.meta.env.VITE_AUTH_API + '/auth/login',
         options,
       );
+
+      if (!response.token) {
+        throw new Error('Login failed');
+      }
+
       return response;
     } catch (error) {
       throw new Error((error as Error).message);
@@ -168,7 +179,7 @@ const useUser = () => {
     } catch (error) {
       throw new Error((error as Error).message);
     }
-  }
+  };
 
   const getUsernameAvailable = async (username: string) => {
     try {
@@ -179,7 +190,7 @@ const useUser = () => {
     } catch (error) {
       throw new Error((error as Error).message);
     }
-  }
+  };
 
   const getEmailAvailable = async (email: string) => {
     try {
@@ -190,7 +201,7 @@ const useUser = () => {
     } catch (error) {
       throw new Error((error as Error).message);
     }
-  }
+  };
 
   const getUserByUserId = async (user_id: number) => {
     try {
@@ -201,9 +212,15 @@ const useUser = () => {
     } catch (error) {
       throw new Error((error as Error).message);
     }
-  }
+  };
 
-  return {getUser, postRegister, getUsernameAvailable, getEmailAvailable, getUserByUserId};
+  return {
+    getUser,
+    postRegister,
+    getUsernameAvailable,
+    getEmailAvailable,
+    getUserByUserId,
+  };
 };
 
 const useComment = () => {
@@ -375,9 +392,8 @@ const useFollow = () => {
     }
   };
 
-  return { followArray ,postFollow, removeFollow, getFollowedUsers};
-}
-
+  return {followArray, postFollow, removeFollow, getFollowedUsers};
+};
 
 export {
   useMedia,

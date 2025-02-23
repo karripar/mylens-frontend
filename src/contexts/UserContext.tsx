@@ -14,16 +14,15 @@ const UserProvider = ({children}: {children: React.ReactNode}) => {
 
   const handleLogin = async (credentials: Credentials) => {
     try {
-      const user = await postLogin(credentials);
-      if (user) {
-        console.log('login successful');
-        localStorage.setItem('token', user.token);
-        const userResponse = await getUser(user.token);
-        setUser(userResponse.user);
-        navigate('/');
-      } else {
-        console.error('login failed');
+      const response = await postLogin(credentials);
+      if (!response.user) {
+        throw new Error('Login failed');
       }
+      console.log('login successful');
+      localStorage.setItem('token', response.token);
+      const userResponse = await getUser(response.token);
+      setUser(userResponse.user);
+      navigate('/');
   } catch (error) {
     console.error((error as Error).message);
   }

@@ -9,6 +9,7 @@ import Login from './views/Login';
 import { UserProvider } from './contexts/UserContext';
 import Upload from './views/Upload';
 import Single from './views/Single';
+import Logout from './views/Logout';
 
 const ProfilePage = () => {
   const {user} = useUserContext();
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="/post" element={<Upload />}></Route>
             <Route path="/single" element={<Single/>}></Route>
             <Route path="/search" element={<Search/>}></Route>
+            <Route path="/logout" element={<Logout/>}></Route>
           </Route>
         </Routes>
         </UserProvider>

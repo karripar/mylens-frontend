@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useUserContext from "../hooks/contextHooks"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MediaItem, MediaItemWithOwner, UserWithNoPassword } from "hybrid-types/DBTypes";
 import { fetchData } from "../lib/functions";
 
@@ -85,7 +85,7 @@ const Profile = () => {
     <div className="flex space-x-6">
       <div className="text-center">
         <p className="text-sm text-gray-500">Posts</p>
-        <p className="font-semibold text-xl">15</p> 
+        <p className="font-semibold text-xl">15</p>
       </div>
       <div className="text-center">
         <p className="text-sm text-gray-500">Followers</p>
@@ -102,9 +102,10 @@ const Profile = () => {
       <button className="px-6 py-2 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition duration-200">
         Edit Profile
       </button>
-      <button className="px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-100 transition duration-200">
-        Logout
+      <Link to="/logout">
+      <button className="px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-200 transition duration-200">Logout
       </button>
+      </Link>
     </div>
   </div>
 </div>

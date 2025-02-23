@@ -11,6 +11,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
   const {postRegister, getUsernameAvailable, getEmailAvailable} = useUser();
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [emailAvailable, setEmailAvailable] = useState(true);
+  const [message, setMessage] = useState<{text: string, type: "success" | "error"} | null>(null);
   const initValues: RegisterCredentials = {username: '', email: '', password: ''};
 
   const doRegister = async () => {
@@ -19,9 +20,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
       if (!response) {
         throw new Error('Registration failed');
       }
+      setMessage({text: 'Registration successful, you may log in!', type: 'success'});
       console.log('Registration successful');
     } catch (error) {
       console.error((error as Error).message);
+      setMessage({text: (error as Error).message, type: 'error'});
     }
   };
 
@@ -66,6 +69,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
       <div className="flex flex-col items-center justify-center min-h-1/2 bg-gray-900 p-4 my-20">
         <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6">
           <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">Register</h2>
+          {message && (
+            <p className={`text-${message.type === 'success' ? 'green' : 'red'}-500 text-center`}>
+              {message.text}
+            </p>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
