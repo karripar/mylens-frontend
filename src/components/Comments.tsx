@@ -22,6 +22,12 @@ const Comments = ({item}: {item: MediaItemWithOwner}) => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found');
       await postComment(inputs.comment_text, item.media_id, null, token);
+
+      // Fetch comments after posting a new comment
+      const response = await getCommentsByMediaId(item.media_id);
+      if (!response) return;
+      setComments(response);
+
     } catch (error) {
       console.error(error);
     }

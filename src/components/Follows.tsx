@@ -39,6 +39,7 @@ const Follows = ({ userId }: { userId: number }) => {
 
     try {
       const userFollows = await getFollowedUsers(userId);
+      console.log(userFollows);
       const userFollow = userFollows.length > 0 ? userFollows[0] : null;
       followDispatch({ type: "follow", follow: userFollow });
     } catch (error) {
@@ -60,6 +61,7 @@ const Follows = ({ userId }: { userId: number }) => {
       if (followState.userFollow) {
         // Remove follow
         await removeFollow(followState.userFollow.follow_id, token);
+
         followDispatch({ type: "follow", follow: null });
         followDispatch({ type: "setFollowCount", count: followState.count - 1 });
       } else {
@@ -72,10 +74,11 @@ const Follows = ({ userId }: { userId: number }) => {
         }
         followDispatch({ type: "follow", follow: newFollow });
         followDispatch({ type: "setFollowCount", count: followState.count + 1 });
-        fetchFollowData();
       }
     } catch (error) {
       console.error((error as Error).message);
+    } finally {
+      fetchFollowData();
     }
   };
 
