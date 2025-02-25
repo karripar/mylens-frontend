@@ -3,14 +3,35 @@ import useUserContext from "../hooks/contextHooks"
 import { Link, useNavigate } from "react-router-dom";
 import { MediaItem, MediaItemWithOwner, UserWithNoPassword } from "hybrid-types/DBTypes";
 import { fetchData } from "../lib/functions";
-
+import { useFollow } from "../hooks/apiHooks";
 
 const Profile = () => {
   const {user} = useUserContext();
   const navigate = useNavigate();
   const [userMedia, setUserMedia] = useState<MediaItemWithOwner[]>([]);
+  const {getFollowedUsers, getFollowers} = useFollow();
+
+  const [followerCount, setFollowerCount] = useState<number>(0);
+  const [followingCount, setFollowingCount] = useState<number>(0);
 
   useEffect(() => {
+
+    const fetchFollowData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token || !user) return;
+
+      try {
+        const userFollows = await getFollowedUsers(token);
+        const userFollowers = await getFollowers(token);
+
+        setFollowerCount(userFollowers.length);
+        setFollowingCount(userFollows.length);
+
+      } catch (error) {
+        console.error((error as Error).message);
+      }
+    };
+
     const fetchUserMedia = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -19,6 +40,7 @@ const Profile = () => {
         // Fetch media specific to the logged-in user
         const options = {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         };
@@ -56,6 +78,7 @@ const Profile = () => {
     };
 
     fetchUserMedia();
+    fetchFollowData();
   }, [user]); // Refetch when the user context changes
 
 
@@ -66,7 +89,7 @@ const Profile = () => {
     {/* Profile Picture */}
     <div className="relative">
       <img
-        src="https://via.placeholder.com/120"
+        src="https://randomuser.me/api/portraits"
         alt=""
         className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover"
       />
@@ -85,15 +108,15 @@ const Profile = () => {
     <div className="flex space-x-6">
       <div className="text-center">
         <p className="text-sm text-gray-500">Posts</p>
-        <p className="font-semibold text-xl">15</p>
+        <p className="font-semibold text-xl">{userMedia.length}</p>
       </div>
       <div className="text-center">
         <p className="text-sm text-gray-500">Followers</p>
-        <p className="font-semibold text-xl">200</p>
+        <p className="font-semibold text-xl">{followerCount}</p>
       </div>
       <div className="text-center">
         <p className="text-sm text-gray-500">Following</p>
-        <p className="font-semibold text-xl">180</p>
+        <p className="font-semibold text-xl">{followingCount}</p>
       </div>
     </div>
 
