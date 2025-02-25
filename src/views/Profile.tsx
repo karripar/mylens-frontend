@@ -79,6 +79,7 @@ const Profile = () => {
 
     fetchUserMedia();
     fetchFollowData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]); // Refetch when the user context changes
 
 
