@@ -29,7 +29,7 @@ const MediaRow = (props: MediaRowProps) => {
         </div>
         <div className="ml-auto">
           {user && user.user_id !== item.user_id && (
-              <Follows userId={item.user_id} />
+            <Follows userId={item.user_id} />
           )}
         </div>
       </div>
