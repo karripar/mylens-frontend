@@ -19,11 +19,12 @@ const Home = () => {
 
   useEffect(() => {
     const fetchFollowed = async () => {
-      if (!user) return;  // If no user is logged in, do nothing
+      const token = localStorage.getItem('token');
+      if (!user || !token) return;  // If no user is logged in, do nothing
 
       try {
         // Get the list of users that the logged-in user is following
-        const followedUsers = await getFollowedUsers(user.user_id);
+        const followedUsers = await getFollowedUsers(token as string);
         console.log('Followed Users:', followedUsers); // Log followed users
 
         // Extract followed user IDs

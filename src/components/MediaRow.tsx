@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import useUserContext from '../hooks/contextHooks';
 import {MessageCircle} from 'lucide-react';
 import Likes from './Likes';
+import Follows from './Follows';
 
 type MediaRowProps = {
   item: MediaItemWithOwner;
@@ -28,9 +29,7 @@ const MediaRow = (props: MediaRowProps) => {
         </div>
         <div className="ml-auto">
           {user && user.user_id !== item.user_id && (
-            <button className="text-white font-semibold bg-blue-500 px-2 py-1 rounded-md hover:bg-blue-600 transition-all duration-300">
-              Follow
-            </button>
+              <Follows userId={item.user_id} />
           )}
         </div>
       </div>
