@@ -380,10 +380,16 @@ const useFollow = () => {
     }
   };
 
-  const getFollowedUsers = async (user_id: number) => {
+  const getFollowedUsers = async (token: string) => {
     try {
+      const options = {
+        headers: {
+          Authorization: 'Bearer ' + token || '',
+        },
+      };
       const response = await fetchData<Follow[]>(
-        import.meta.env.VITE_MEDIA_API + '/follows/byuser/' + user_id,
+        import.meta.env.VITE_MEDIA_API + '/follows/bytoken/followed',
+        options,
       );
       setFollowArray(response);
       return response;
@@ -392,7 +398,25 @@ const useFollow = () => {
     }
   };
 
-  return {followArray, postFollow, removeFollow, getFollowedUsers};
+  const getFollowers = async (token: string) => {
+    try {
+      const options = {
+        headers: {
+          Authorization: 'Bearer ' + token || '',
+        },
+      };
+      const response = await fetchData<Follow[]>(
+        import.meta.env.VITE_MEDIA_API + '/follows/bytoken/followers',
+        options,
+
+      );
+      return response;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  return {followArray, postFollow, removeFollow, getFollowedUsers, getFollowers};
 };
 
 export {
