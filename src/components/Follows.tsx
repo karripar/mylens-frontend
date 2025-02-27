@@ -87,7 +87,7 @@ const Follows = ({ userId }: { userId: number }) => {
       <button
         onClick={handleFollow}
         className={`py-1 px-4 rounded-lg transition duration-200 ${
-          followState.userFollow ? "bg-red-500 text-white hover:bg-red-600" : "bg-blue-500 text-white hover:bg-blue-600"
+          followState.userFollow ? "bg-gray-500 text-white hover:bg-gray-700" : "bg-blue-500 text-white hover:bg-blue-600"
         }`}
       >
         {followState.userFollow ? "Unfollow" : "Follow"}

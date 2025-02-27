@@ -50,6 +50,7 @@ const Home = () => {
     }
 
     // Ensure this effect is triggered when the feed or user changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFeed, user, mediaArray]);  // Dependencies include activeFeed, user, and mediaArray
 
   return (

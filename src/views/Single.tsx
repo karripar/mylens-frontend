@@ -8,9 +8,13 @@ import useUserContext from '../hooks/contextHooks';
 
 const Single = () => {
   const {state} = useLocation();
-  const item: MediaItemWithOwner = state.item;
+  const item: MediaItemWithOwner = state?.item;
   const navigate: NavigateFunction = useNavigate();
   const {user} = useUserContext();
+
+  if (!item) {
+    return <div className="text-white">Item not found</div>
+  }
 
   return (
     <div>

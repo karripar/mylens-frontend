@@ -16,13 +16,17 @@ import {
   UserResponse,
 } from 'hybrid-types/MessageTypes';
 
-const useMedia = () => {
+
+const useMedia = (token?: string) => {
   const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
 
   useEffect(() => {
     const getMedia = async () => {
+      // fetch media items from the API. if token is provided -> fetch only media items that belong to the user
       try {
         // kaikki mediat ilman omistajan tietoja
+        const url = token ? import.meta.env.VITE_MEDIA_API + '/media/bytoken' : import.meta.env.VITE_MEDIA_API + '/media';
+
         const options = {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('token') || '',
@@ -30,7 +34,7 @@ const useMedia = () => {
           },
         };
         const media = await fetchData<MediaItem[]>(
-          import.meta.env.VITE_MEDIA_API + '/media',
+          url,
           options,
         );
         // haetaan omistajat id:n perusteella
@@ -58,6 +62,7 @@ const useMedia = () => {
     };
 
     getMedia();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const postMedia = async (

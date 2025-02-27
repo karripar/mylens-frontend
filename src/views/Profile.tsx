@@ -1,22 +1,19 @@
 import {useEffect, useState} from 'react';
 import useUserContext from '../hooks/contextHooks';
 import {Link, useNavigate} from 'react-router-dom';
-import {
-  MediaItem,
-  MediaItemWithOwner,
-  UserWithNoPassword,
-} from 'hybrid-types/DBTypes';
-import {fetchData} from '../lib/functions';
 import {useFollow} from '../hooks/apiHooks';
+import { useMedia } from '../hooks/apiHooks';
 
 const Profile = () => {
   const {user} = useUserContext();
   const navigate = useNavigate();
-  const [userMedia, setUserMedia] = useState<MediaItemWithOwner[]>([]);
   const {getFollowedUsers, getFollowers} = useFollow();
 
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
+
+  const token = localStorage.getItem('token') || '';
+  const {mediaArray} = useMedia(token);
 
   useEffect(() => {
     const fetchFollowData = async () => {
@@ -34,52 +31,6 @@ const Profile = () => {
       }
     };
 
-    const fetchUserMedia = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token || !user) return; // Make sure the user is authenticated
-
-        // Fetch media specific to the logged-in user
-        const options = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        };
-        console.log('options', options);
-
-        // Fetch user media from the server
-        const userMedia = await fetchData<MediaItem[]>(
-          import.meta.env.VITE_MEDIA_API + '/media/bytoken',
-          options,
-        );
-        console.log('userMedia', userMedia);
-
-        // Fetch the owner info for each piece of media
-        const userMediaWithOwner: MediaItemWithOwner[] = await Promise.all(
-          userMedia.map(async (item) => {
-            const owner = await fetchData<UserWithNoPassword>(
-              import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
-              options,
-            );
-
-            const mediaItem = {
-              ...item,
-              username: owner.username,
-            };
-
-            return mediaItem;
-          }),
-        );
-
-        // Set the media to state
-        setUserMedia(userMediaWithOwner);
-      } catch (error) {
-        console.error('Error fetching user media:', (error as Error).message);
-      }
-    };
-
-    fetchUserMedia();
     fetchFollowData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]); // Refetch when the user context changes
@@ -110,7 +61,7 @@ const Profile = () => {
           <div className="flex space-x-6">
             <div className="text-center">
               <p className="text-sm text-gray-500">Posts</p>
-              <p className="font-semibold text-xl">{userMedia.length}</p>
+              <p className="font-semibold text-xl">{mediaArray.length}</p>
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-500">Followers</p>
@@ -141,7 +92,7 @@ const Profile = () => {
           Your uploads
         </h2>
         <div className="flex flex-wrap items-start justify-center">
-          {userMedia.map((item) => (
+          {mediaArray.map((item) => (
             <div key={item.media_id} className="m-2">
               <img
                 onClick={() => navigate('/single', {state: {item}})}
