@@ -16,8 +16,7 @@ import {
   UserResponse,
 } from 'hybrid-types/MessageTypes';
 
-
-const useMedia = (token?: string) => {
+const useMedia = (token?: string, username?: string) => {
   const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
 
   useEffect(() => {
@@ -25,18 +24,24 @@ const useMedia = (token?: string) => {
       // fetch media items from the API. if token is provided -> fetch only media items that belong to the user
       try {
         // kaikki mediat ilman omistajan tietoja
-        const url = token ? import.meta.env.VITE_MEDIA_API + '/media/bytoken' : import.meta.env.VITE_MEDIA_API + '/media';
+        console.log(token);
+        console.log(username);
+        let url;
+        if (typeof token === 'string' && token.length > 0) {
+          url = `${import.meta.env.VITE_MEDIA_API}/media/bytoken`;
+        } else if (username) {
+          url = `${import.meta.env.VITE_MEDIA_API}/media/byusername/${username}`;
+        } else {
+          url = `${import.meta.env.VITE_MEDIA_API}/media`;
+        }
 
         const options = {
           headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('token') || '',
+            Authorization: token ? `Bearer ${token}` : '',
             'Content-Type': 'application/json',
           },
         };
-        const media = await fetchData<MediaItem[]>(
-          url,
-          options,
-        );
+        const media = await fetchData<MediaItem[]>(url, options);
         // haetaan omistajat id:n perusteella
         const mediaWithOwner: MediaItemWithOwner[] = await Promise.all(
           media.map(async (item) => {
@@ -385,7 +390,14 @@ const useFollow = () => {
     }
   };
 
-  const getFollowedUsers = async (token: string) => {
+  const getFollowedUsers = async (token?: string, username?: string) => {
+    let url;
+    if (username) {
+      url = `${import.meta.env.VITE_MEDIA_API}/follows/byusername/followed/${username}`;
+    } else {
+      url = `${import.meta.env.VITE_MEDIA_API}/follows/bytoken/followed`;
+    }
+
     try {
       const options = {
         headers: {
@@ -393,7 +405,7 @@ const useFollow = () => {
         },
       };
       const response = await fetchData<Follow[]>(
-        import.meta.env.VITE_MEDIA_API + '/follows/bytoken/followed',
+        url,
         options,
       );
       setFollowArray(response);
@@ -403,7 +415,14 @@ const useFollow = () => {
     }
   };
 
-  const getFollowers = async (token: string) => {
+  const getFollowers = async (token?: string, username?: string) => {
+    let url;
+    if (username) {
+      url = `${import.meta.env.VITE_MEDIA_API}/follows/byusername/followers/${username}`;
+    } else {
+      url = `${import.meta.env.VITE_MEDIA_API}/follows/bytoken/followers`;
+    }
+
     try {
       const options = {
         headers: {
@@ -411,7 +430,7 @@ const useFollow = () => {
         },
       };
       const response = await fetchData<Follow[]>(
-        import.meta.env.VITE_MEDIA_API + '/follows/bytoken/followers',
+        url,
         options,
       );
       return response;

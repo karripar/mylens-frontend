@@ -20,8 +20,26 @@ const MediaRow = (props: MediaRowProps) => {
     <article className="flex flex-col w-full max-w-lg bg-gray-800 p-4 rounded-lg shadow-lg mx-auto my-3 space-y-3">
       {/* User Info */}
       <div className="flex items-center space-x-3 w-full">
-        <div className="w-10 h-10 bg-gray-700 rounded-full" />
-        <div className="text-left">
+        <div
+          className="w-10 h-10 bg-gray-700 rounded-full cursor-pointer"
+          onClick={() =>
+            navigate(
+              user?.username === item.username
+                ? '/user'
+                : `/profile/${item.username}`,
+            )
+          }
+        />
+        <div
+          className="text-left cursor-pointer"
+          onClick={() =>
+            navigate(
+              user?.username === item.username
+                ? '/user'
+                : `/profile/${item.username}`,
+            )
+          }
+        >
           <p className="text-white font-semibold">{item.username}</p>
           <p className="text-xs text-gray-400">
             {new Date(item.created_at).toLocaleString('fi-FI')}

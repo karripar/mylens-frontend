@@ -42,7 +42,7 @@ const Profile = () => {
           {/* Profile Picture */}
           <div className="relative">
             <img
-              src="https://randomuser.me/api/portraits"
+              src="https://randomuser.me/api/portraits/men/1.jpg"
               alt=""
               className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover"
             />
