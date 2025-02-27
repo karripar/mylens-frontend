@@ -408,7 +408,6 @@ const useFollow = () => {
       const response = await fetchData<Follow[]>(
         import.meta.env.VITE_MEDIA_API + '/follows/bytoken/followers',
         options,
-
       );
       return response;
     } catch (error) {
@@ -416,7 +415,13 @@ const useFollow = () => {
     }
   };
 
-  return {followArray, postFollow, removeFollow, getFollowedUsers, getFollowers};
+  return {
+    followArray,
+    postFollow,
+    removeFollow,
+    getFollowedUsers,
+    getFollowers,
+  };
 };
 
 export {
