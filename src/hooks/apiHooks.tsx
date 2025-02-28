@@ -1,4 +1,4 @@
-import {Comment, Follow} from 'hybrid-types/DBTypes';
+import {Comment, Follow, MediaResponse} from 'hybrid-types/DBTypes';
 import {
   Like,
   MediaItem,
@@ -99,7 +99,7 @@ const useMedia = (token?: string, username?: string) => {
       },
       body: JSON.stringify(media),
     };
-    return await fetchData<MessageResponse>(
+    return await fetchData<MediaResponse>(
       import.meta.env.VITE_MEDIA_API + '/media',
       options,
     );
@@ -350,6 +350,40 @@ const useLike = () => {
   return {postLike, removeLike, getCountByMediaId, getUserLike};
 };
 
+const useTags = () => {
+  const getTags = async () => {
+    try {
+      const response = await fetchData<string[]>(
+        import.meta.env.VITE_MEDIA_API + '/tags',
+      );
+      return response;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  const postTags = async (tags: string[], media_id: number, token: string) => {
+    try {
+      const options = {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({tags, media_id}),
+      };
+      return await fetchData<MessageResponse>(
+        import.meta.env.VITE_MEDIA_API + '/tags',
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  return {getTags, postTags};
+}
+
 const useFollow = () => {
   const [followArray, setFollowArray] = useState<Follow[]>([]);
 
@@ -456,4 +490,5 @@ export {
   useComment,
   useLike,
   useFollow,
+  useTags,
 };

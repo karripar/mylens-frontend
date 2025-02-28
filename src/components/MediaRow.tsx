@@ -20,8 +20,10 @@ const MediaRow = (props: MediaRowProps) => {
     <article className="flex flex-col w-full max-w-lg bg-gray-800 p-3 rounded-lg shadow-lg mx-auto my-3 space-y-3">
       {/* User Info */}
       <div className="flex items-center space-x-3 w-full">
-        <div
-          className="w-10 h-10 bg-gray-700 rounded-full cursor-pointer"
+        <img
+          className="w-10 h-10 rounded-full cursor-pointer object-cover"
+          src="https://randomuser.me/api/portraits/men/1.jpg"
+          alt={item.username}
           onClick={() =>
             navigate(
               user?.username === item.username
