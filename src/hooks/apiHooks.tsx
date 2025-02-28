@@ -1,4 +1,4 @@
-import {Comment, Follow, MediaResponse} from 'hybrid-types/DBTypes';
+import {Comment, Follow, MediaResponse, Tag} from 'hybrid-types/DBTypes';
 import {
   Like,
   MediaItem,
@@ -353,8 +353,19 @@ const useLike = () => {
 const useTags = () => {
   const getTags = async () => {
     try {
-      const response = await fetchData<string[]>(
+      const response = await fetchData<Tag[]>(
         import.meta.env.VITE_MEDIA_API + '/tags',
+      );
+      return response;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  const getTagsByMediaId = async (media_id: number) => {
+    try {
+      const response = await fetchData<Tag[]>(
+        import.meta.env.VITE_MEDIA_API + '/tags/bymedia/' + media_id,
       );
       return response;
     } catch (error) {
@@ -381,8 +392,8 @@ const useTags = () => {
     }
   };
 
-  return {getTags, postTags};
-}
+  return {getTags, getTagsByMediaId, postTags};
+};
 
 const useFollow = () => {
   const [followArray, setFollowArray] = useState<Follow[]>([]);
@@ -438,10 +449,7 @@ const useFollow = () => {
           Authorization: 'Bearer ' + token || '',
         },
       };
-      const response = await fetchData<Follow[]>(
-        url,
-        options,
-      );
+      const response = await fetchData<Follow[]>(url, options);
       setFollowArray(response);
       return response;
     } catch (error) {
@@ -463,10 +471,7 @@ const useFollow = () => {
           Authorization: 'Bearer ' + token || '',
         },
       };
-      const response = await fetchData<Follow[]>(
-        url,
-        options,
-      );
+      const response = await fetchData<Follow[]>(url, options);
       return response;
     } catch (error) {
       throw new Error((error as Error).message);
