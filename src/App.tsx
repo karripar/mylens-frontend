@@ -11,6 +11,7 @@ import Upload from './views/Upload';
 import Single from './views/Single';
 import Logout from './views/Logout';
 import VisitProfile from './views/VisitProfile';
+import TagMedia from './views/TagMedia';
 
 const ProfilePage = () => {
   const {user} = useUserContext();
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/single" element={<Single/>}></Route>
             <Route path="/search" element={<Search/>}></Route>
             <Route path="/logout" element={<Logout/>}></Route>
+            <Route path="/tag/:tag" element={<TagMedia/>}></Route>
           </Route>
         </Routes>
         </UserProvider>

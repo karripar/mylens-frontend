@@ -4,8 +4,7 @@ import useUserContext from '../hooks/contextHooks';
 import {MessageCircle} from 'lucide-react';
 import Likes from './Likes';
 import Follows from './Follows';
-import { useTags } from '../hooks/apiHooks';
-import { useEffect, useState } from 'react';
+import { useMediaTags } from '../hooks/useMediaTags';
 
 type MediaRowProps = {
   item: MediaItemWithOwner;
@@ -16,16 +15,9 @@ const MediaRow = (props: MediaRowProps) => {
   const {item} = props;
   const {user} = useUserContext();
   const navigate = useNavigate();
-  const {getTagsByMediaId} = useTags();
-  const [tags, setTags] = useState<string[]>([]);
+  const tags = useMediaTags(item.media_id);
   console.log(item.thumbnail);
 
-  useEffect(() => {
-    getTagsByMediaId(item.media_id).then((tags) => {
-      setTags(tags.map((tag) => tag.tag_name));
-    });
-  }
-  , [item.media_id]);
 
   return (
     <article className="flex flex-col w-full max-w-lg bg-gray-800 p-3 rounded-lg shadow-lg mx-auto my-3 space-y-3">
@@ -95,7 +87,8 @@ const MediaRow = (props: MediaRowProps) => {
           tags.map((tag) => (
             <span
               key={tag}
-              className="text-xs bg-gray-700 text-white px-2 py-1 rounded-md"
+              className="text-xs bg-gray-700 text-white px-2 py-1 rounded-md cursor-pointer hover:bg-gray-600"
+              onClick={() => navigate(`/tag/${tag}`)}
             >
               {tag}
             </span>

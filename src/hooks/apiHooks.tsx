@@ -104,7 +104,32 @@ const useMedia = (token?: string, username?: string) => {
       options,
     );
   };
-  return {mediaArray, postMedia};
+
+  const getMediaByTagName = async (tag: string) => {
+    try {
+      const response = await fetchData<MediaItem[]>(
+        import.meta.env.VITE_MEDIA_API + '/media/bytagname/' + tag,
+      );
+      const mediaWithOwner: MediaItemWithOwner[] = await Promise.all(
+        response.map(async (item) => {
+          const owner = await fetchData<UserWithNoPassword>(
+            import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
+          );
+
+          const mediaItem: MediaItemWithOwner = {
+            ...item,
+            username: owner.username,
+          };
+          return mediaItem;
+        }),
+      );
+      return mediaWithOwner;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  return {mediaArray, postMedia, getMediaByTagName};
 };
 
 const useFile = () => {

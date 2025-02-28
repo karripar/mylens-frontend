@@ -5,12 +5,14 @@ import Likes from '../components/Likes';
 import Follows from '../components/Follows';
 import {ArrowLeft} from 'lucide-react';
 import useUserContext from '../hooks/contextHooks';
+import { useMediaTags } from '../hooks/useMediaTags';
 
 const Single = () => {
   const {state} = useLocation();
   const item: MediaItemWithOwner = state?.item;
   const navigate: NavigateFunction = useNavigate();
   const {user} = useUserContext();
+  const tags = useMediaTags(item.media_id);
 
   if (!item) {
     return <div className="text-white">Item not found</div>
@@ -44,6 +46,17 @@ const Single = () => {
             />
           )}
         </div>
+        <div className="flex flex-wrap gap-1 my-3">
+        {tags.length > 0 &&
+          tags.map((tag) => (
+            <span
+              key={tag}
+              className="text-xs bg-gray-700 text-white px-2 py-1 rounded-md"
+            >
+              {tag}
+            </span>
+          )) || <span className="text-xs text-gray-400">No tags</span>}
+      </div>
 
         <div className="w-full max-w-2xl flex flex-col items-center justify-center p-4 bg-gray-800 text-white mt-4 rounded-md shadow-md text-center">
         {user && user.user_id !== item.user_id && <Follows userId={item.user_id} />}
