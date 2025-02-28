@@ -75,6 +75,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
             </p>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="justify-start text-start">
+            <label htmlFor="username" className="text-gray-800 text-sm">
+              Username
+            </label>
             <input
               type="text"
               name="username"
@@ -86,6 +90,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
                 usernameAvailable ? 'border-green-500' : 'border-red-500'
               }`}
             />
+            </div>
+            <div className="justify-start text-start">
+            <label htmlFor="email" className="text-gray-800 text-sm">
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -97,6 +106,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
                 emailAvailable ? 'border-green-500' : 'border-red-500'
               }`}
             />
+            </div>
+            <div className="justify-start text-start">
+            <label htmlFor="password" className="text-gray-800 text-sm">
+              Password
+            </label>
             <input
               type="password"
               name="password"
@@ -106,6 +120,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
+            </div>
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"

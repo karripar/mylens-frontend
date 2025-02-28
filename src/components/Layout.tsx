@@ -1,5 +1,5 @@
 import {Link, Outlet} from 'react-router-dom';
-
+import { House, Search, Plus, User} from 'lucide-react';
 
 
 const Layout = () => {
@@ -12,24 +12,24 @@ const Layout = () => {
         </div>
       </div>
     </header>
-    <main className="container mx-auto p-2 bg-gray-900 rounded-lg shadow-lg mt-4 h-full">
+    <main className="container mx-auto bg-gray-900 rounded-lg shadow-lg mt-4 h-full">
       <Outlet />
     </main>
     <footer className="bg-gray-800 text-white text-center p-4 fixed bottom-0 w-full z-10 inset-x-0">
       <div>
         <nav>
-          <ul className="flex justify-center space-x-25 text-lg">
+          <ul className="flex justify-center space-x-20 text-lg">
             <li>
-              <Link to="/"><i aria-label="Link to home page" className="fa-solid fa-house hover:opacity-80 hover:scale-105 transition-all duration-200"></i></Link>
+              <Link to="/"><House className="hover:opacity-85 hover:scale-105 ease-in-out"></House></Link>
             </li>
             <li>
-              <Link to="/search" aria-label="Link to search page"><i className="fa-solid fa-search hover:opacity-80 hover:scale-105 transition-all duration-200"></i></Link>
+              <Link to="/search" aria-label="Link to search page"><Search className="hover:opacity-85 hover:scale-105 ease-in-out"></Search></Link>
             </li>
             <li>
-              <Link to="/post"><i aria-label="link to upload" className="fa-solid fa-plus hover:opacity-80 hover:scale-105 transition-all duration-200"></i></Link>
+              <Link to="/post"><Plus className="hover:opacity-85 hover:scale-105 ease-in-out"></Plus></Link>
             </li>
             <li>
-              <Link to="/user"><i aria-label="link to user page" className="fa-regular fa-user hover:opacity-80 hover:scale-105 transition-all duration-200"></i></Link>
+              <Link to="/user"><User className="hover:opacity-85 hover:scale-105 ease-in-out"></User></Link>
             </li>
           </ul>
         </nav>

@@ -1,4 +1,4 @@
-import React, {createContext, useState} from "react";
+import React, {createContext, useEffect, useState} from "react";
 import { UserWithNoPassword } from "hybrid-types/DBTypes";
 import { useAuthentication, useUser } from "../hooks/apiHooks";
 import { AuthContextType, Credentials } from "../types/localTypes";
@@ -11,6 +11,11 @@ const UserProvider = ({children}: {children: React.ReactNode}) => {
   const {postLogin} = useAuthentication();
   const {getUser} = useUser();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    handleAutoLogin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogin = async (credentials: Credentials) => {
     try {

@@ -69,105 +69,114 @@ const Upload = () => {
       </h1>
 
       {/* Upload Form */}
-      <form className="space-y-5" onSubmit={handleSubmit}>
-        {/* File Upload Section */}
-        <label
-          htmlFor="file"
-          className="relative flex h-48 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-stone-700 bg-stone-900 p-4 text-center text-gray-400 transition hover:border-amber-500 hover:bg-stone-800"
+      <form className="space-y-6 rounded-xl bg-white p-8 shadow-xl">
+  {/* File Upload Section */}
+  <label
+    htmlFor="file"
+    className="relative flex h-52 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-100 p-6 text-center text-gray-600 transition duration-200 hover:border-amber-500 hover:bg-gray-50"
+  >
+    {file ? (
+      <img
+        src={URL.createObjectURL(file)}
+        className="absolute inset-0 h-full w-full rounded-xl object-cover"
+        alt="Preview"
+      />
+    ) : (
+      <>
+        <svg
+          className="mb-3 h-12 w-12 text-amber-500 transition duration-200 hover:scale-105"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          {file ? (
-            <img
-              src={URL.createObjectURL(file)}
-              className="absolute inset-0 h-full w-full rounded-xl object-cover"
-              alt="Preview"
-            />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 16.5V18a2 2 0 002 2h14a2 2 0 002-2v-1.5M12 3v12m-3-3 3 3 3-3"
+          ></path>
+        </svg>
+        <span className="text-sm font-semibold tracking-wide">
+          Click or Drag to Upload
+        </span>
+        <input
+          type="file"
+          id="file"
+          accept="image/*, video/*"
+          onChange={handleFileChange}
+          ref={fileRef}
+          className="absolute inset-0 h-full w-full opacity-0"
+        />
+      </>
+    )}
+  </label>
 
-            ) : (
-          <>
-              <svg
-                className="mb-2 h-10 w-10 text-amber-500"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 16.5V18a2 2 0 002 2h14a2 2 0 002-2v-1.5M12 3v12m-3-3 3 3 3-3"
-                ></path>
-              </svg>
-              <span className="text-sm font-medium">Click or Drag to Upload</span>
-              <input
-                type="file"
-                id="file"
-                accept="image/*, video/*"
-                onChange={handleFileChange}
-                ref={fileRef}
-                className="absolute inset-0 h-full w-full opacity-0"
-              />
-            </>
-          )}
-        </label>
+  {/* Title Input */}
+  <div className="relative">
+    <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+      Title
+    </label>
+    <input
+      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition duration-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+      name="title"
+      type="text"
+      id="title"
+      onChange={handleInputChange}
+      value={inputs.title}
+      placeholder="Enter a title..."
+    />
+  </div>
 
-        {/* Title Input */}
-        <div className="relative">
-          <input
-            className="w-full rounded-lg border border-stone-700 bg-stone-800 px-4 py-3 text-white outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
-            name="title"
-            type="text"
-            id="title"
-            onChange={handleInputChange}
-            value={inputs.title}
-            placeholder="Title"
-          />
-        </div>
+  {/* Description Input */}
+  <div className="relative">
+    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+      Description
+    </label>
+    <textarea
+      className="mt-1 h-32 w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition duration-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
+      name="description"
+      id="description"
+      onChange={handleInputChange}
+      value={inputs.description}
+      placeholder="Write a description..."
+    ></textarea>
+  </div>
 
-        {/* Description Input */}
-        <div className="relative">
-          <textarea
-            className="h-28 w-full resize-none rounded-lg border border-stone-700 bg-stone-800 px-4 py-3 text-white outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
-            name="description"
-            id="description"
-            onChange={handleInputChange}
-            value={inputs.description}
-            placeholder="Write a description..."
-          ></textarea>
-        </div>
+  {/* Buttons */}
+  <div className="flex items-center justify-between gap-4">
+    <button
+      className={`flex-1 rounded-lg px-5 py-3 font-medium text-white transition duration-200 ${
+        file && inputs.title.length > 3 && inputs.description.length > 0
+          ? "bg-amber-500 hover:bg-amber-600 shadow-lg"
+          : "cursor-not-allowed bg-gray-400"
+      }`}
+      onClick={handleSubmit}
+      type="submit"
+      disabled={
+        !file || inputs.title.length <= 3 || inputs.description.length === 0
+      }
+    >
+      {uploading ? "Uploading..." : "Upload"}
+    </button>
 
-        {/* Buttons */}
-        <div className="flex items-center justify-between gap-3">
-          <button
-            className={`flex-1 rounded-lg px-5 py-3 font-medium text-white transition ${
-              file && inputs.title.length > 3 && inputs.description.length > 0
-                ? "bg-amber-600 hover:bg-amber-700"
-                : "cursor-not-allowed bg-gray-500"
-            }`}
-            type="submit"
-            disabled={
-              !file || inputs.title.length <= 3 || inputs.description.length === 0
-            }
-          >
-            {uploading ? "Uploading..." : "Upload"}
-          </button>
+    <button
+      type="button"
+      onClick={resetForm}
+      className="flex-1 rounded-lg bg-gray-200 px-5 py-3 font-medium text-gray-700 transition duration-200 hover:bg-gray-300 hover:shadow-md"
+    >
+      Reset
+    </button>
+  </div>
 
-          <button
-            type="button"
-            onClick={resetForm}
-            className="flex-1 rounded-lg bg-stone-700 px-5 py-3 font-medium text-white transition hover:bg-stone-600"
-          >
-            Reset
-          </button>
-        </div>
+  {/* Upload Result */}
+  {uploadResult && (
+    <p className="mt-4 text-center text-sm font-medium text-gray-600">
+      {uploadResult}
+    </p>
+  )}
+</form>
 
-        {/* Upload Result */}
-        {uploadResult && (
-          <p className="mt-3 text-center text-sm font-medium text-gray-300">
-            {uploadResult}
-          </p>
-        )}
-      </form>
     </div>
   </div>
   </>

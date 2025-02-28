@@ -38,6 +38,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleRegister }) => {
           </div>
         )}
         <form onSubmit={handleSubmit} className="space-y-4 ">
+          <div className="justify-start text-start">
+          <label htmlFor="email" className="text-sm">Email</label>
           <input
             type="email"
             name="email"
@@ -48,6 +50,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleRegister }) => {
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+          </div>
+          <div className="justify-start text-start">
+          <label htmlFor="password" className="text-sm">Password</label>
           <input
             type="password"
             name="password"
@@ -57,6 +62,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleRegister }) => {
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+          </div>
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
