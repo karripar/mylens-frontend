@@ -191,6 +191,7 @@ const useUser = () => {
         import.meta.env.VITE_AUTH_API + '/users/token',
         options,
       );
+      console.log(response);
       return response;
     } catch (error) {
       throw new Error((error as Error).message);
@@ -249,12 +250,37 @@ const useUser = () => {
     }
   };
 
+  const putUserBioAndUsername = async (
+    info: {username: string; bio: string},
+    token: string,
+  ) => {
+    const options = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(info),
+    };
+
+    try {
+      const response = await fetchData<UserWithNoPassword>(
+        import.meta.env.VITE_AUTH_API + '/users/profileinfo',
+        options,
+      );
+      return response;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
   return {
     getUser,
     postRegister,
     getUsernameAvailable,
     getEmailAvailable,
     getUserByUserId,
+    putUserBioAndUsername,
   };
 };
 

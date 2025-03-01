@@ -83,6 +83,7 @@ const VisitProfile = () => {
               </h2>
 
               {/* User Role */}
+              <p className="text-gray-600 text-lg">{visitedUser.bio}</p>
               <p className="text-gray-600 text-lg">{visitedUser.level_name}</p>
 
               {/* Media / Posts / Follow stats */}
