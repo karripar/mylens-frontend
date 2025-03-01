@@ -63,7 +63,7 @@ const MediaRow = (props: MediaRowProps) => {
           onClick={() => navigate('/single', {state: {item}})}
           className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
           src={
-            item.filename ||
+            item.thumbnail ||
             (item.screenshots && item.screenshots[0]) ||
             undefined
           }
