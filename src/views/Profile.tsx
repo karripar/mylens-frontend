@@ -8,7 +8,7 @@ import { ProfilePicture } from 'hybrid-types/DBTypes';
 
 const Profile = () => {
   const {user} = useUserContext();
-  
+
   //console.log('User after login:', user);
   const navigate = useNavigate();
   const {getFollowedUsers, getFollowers} = useFollow();
@@ -112,7 +112,7 @@ const Profile = () => {
           {/* Profile Picture */}
           <div className="relative">
             <img
-              src={profilePicture?.filename}
+              src={profilePicture?.filename || 'https://robohash.org/' + user?.username}
               alt=""
               className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover"
             />

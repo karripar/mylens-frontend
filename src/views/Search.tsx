@@ -1,6 +1,7 @@
 import {
   MediaItem,
   MediaItemWithOwner,
+  ProfilePicture,
   UserWithNoSensitiveInfo,
 } from 'hybrid-types/DBTypes';
 import {fetchData} from '../lib/functions';
@@ -10,6 +11,7 @@ import Follows from '../components/Follows';
 import Likes from '../components/Likes';
 import {MessageCircle} from 'lucide-react';
 import {useNavigate} from 'react-router-dom';
+import { useProfilePicture } from '../hooks/apiHooks';
 
 const searchOptions = [
   {value: 'title', label: 'Media by Title'},
@@ -26,6 +28,8 @@ const Search = () => {
   const [hasSearched, setHasSearched] = useState(false); // Track whether a search has been performed
   const { user } = useUserContext();
   const navigate = useNavigate();
+  const {getProfilePicture} = useProfilePicture();
+  const [profilePicture, setProfilePicture] = useState<ProfilePicture>();
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -42,6 +46,21 @@ const Search = () => {
     return () => clearTimeout(debounceTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, searchCategory]);
+
+  useEffect(() => {
+    const fetchProfilePicture = async () => {
+      if (!user) return;
+
+      try {
+        const response = await getProfilePicture(user.user_id);
+        setProfilePicture(response);
+      } catch (error) {
+        console.error((error as Error).message);
+      }
+    }
+    fetchProfilePicture();
+  }
+  , [user]);
 
   const handleSearch = async () => {
     const options = {
@@ -132,11 +151,17 @@ const Search = () => {
             <div
               key={userItem.user_id}
               className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow-lg my-3 flex items-center justify-between space-x-2 sm:space-x-4 w-full hover:bg-gray-700 transition-all cursor-pointer"
-              onClick={() => navigate(`/profile/${userItem.username}`)}
+              onClick={() =>
+                navigate(
+                  user?.username === userItem.username
+                    ? '/user'
+                    : `/profile/${userItem.username}`,
+                )
+              }
             >
               {/* Avatar */}
               <img
-                src="https://randomuser.me/api/portraits/men/1.jpg"
+                src={profilePicture?.filename || 'https://robohash.org/' + userItem.username}
                 className="w-10 h-10 min-w-10 rounded-full flex-shrink-0"
               />
 
@@ -200,7 +225,7 @@ const Search = () => {
                 <img
                   onClick={() => navigate('/single', {state: {item}})}
                   className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
-                  src={item.filename || (item.screenshots && item.screenshots[0]) || undefined}
+                  src={item.thumbnail || (item.screenshots && item.screenshots[0]) || undefined}
                   alt={item.title}
                 />
               </div>

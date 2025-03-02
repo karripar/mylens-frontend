@@ -1,8 +1,8 @@
 import {useParams} from 'react-router-dom';
 import {useEffect, useState} from 'react';
-import {UserWithNoPassword} from 'hybrid-types/DBTypes';
+import {ProfilePicture, UserWithNoPassword} from 'hybrid-types/DBTypes';
 import {fetchData} from '../lib/functions';
-import {useFollow, useMedia} from '../hooks/apiHooks';
+import {useFollow, useMedia, useProfilePicture} from '../hooks/apiHooks';
 import {useNavigate} from 'react-router-dom';
 import Follows from '../components/Follows';
 import useUserContext from '../hooks/contextHooks';
@@ -16,11 +16,29 @@ const VisitProfile = () => {
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const {user} = useUserContext();
+  const {getProfilePicture} = useProfilePicture();
+  const [profilePicture, setProfilePicture] = useState<ProfilePicture | null>(
+    null,
+  );
 
   const {getFollowedUsers, getFollowers} = useFollow();
 
   const {mediaArray} = useMedia('', username);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProfilePicture = async () => {
+      if (!visitedUser) return;
+
+      try {
+        const response = await getProfilePicture(visitedUser.user_id);
+        setProfilePicture(response);
+      } catch (error) {
+        console.error((error as Error).message);
+      }
+    };
+    fetchProfilePicture();
+  }, [visitedUser]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -71,7 +89,7 @@ const VisitProfile = () => {
               {/* Profile Picture */}
               <div className="relative">
                 <img
-                  src="https://randomuser.me/api/portraits/men/1.jpg"
+                  src={profilePicture?.filename || 'https://robohash.org/' + visitedUser.username}
                   alt={visitedUser.username}
                   className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover"
                 />
@@ -121,7 +139,7 @@ const VisitProfile = () => {
                     onClick={() => navigate('/single', {state: {item}})}
                     className="w-64 h-64 object-cover rounded-lg cursor-pointer transition-transform duration-300 hover:scale-101"
                     src={
-                      item.filename ||
+                      item.thumbnail ||
                       (item.screenshots && item.screenshots[0]) ||
                       undefined
                     }
