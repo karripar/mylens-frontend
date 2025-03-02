@@ -193,7 +193,7 @@ const Search = () => {
           {mediaSearchResults.map((item) => (
             <article
               key={item.media_id}
-              className="flex flex-col w-full max-w-lg bg-gray-800 p-4 rounded-lg shadow-lg mx-auto my-3 space-y-3"
+              className="flex flex-col w-full max-w-lg bg-gray-800 p-4 rounded-lg shadow-lg mx-auto my-3 space-y-5"
             >
               {/* User Info */}
               <div className="flex items-center space-x-3 w-full">
@@ -225,7 +225,11 @@ const Search = () => {
                 <img
                   onClick={() => navigate('/single', {state: {item}})}
                   className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
-                  src={item.thumbnail || (item.screenshots && item.screenshots[0]) || undefined}
+                  src={
+                    item.thumbnail ||
+                    (item.screenshots && item.screenshots[0]) ||
+                    undefined
+                  }
                   alt={item.title}
                 />
               </div>

@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom"
-import { useMedia} from "../hooks/apiHooks"
+import { useMedia, useProfilePicture } from "../hooks/apiHooks"
 import { useEffect, useState } from "react";
-import { MediaItemWithOwner } from "hybrid-types/DBTypes";
+import { MediaItemWithOwner} from "hybrid-types/DBTypes";
 import useUserContext from "../hooks/contextHooks";
 import Follows from "../components/Follows";
 import { useNavigate } from "react-router-dom";
@@ -14,12 +14,26 @@ const TagMedia = () => {
   const [media, setMedia] = useState<MediaItemWithOwner[]>([]);
   const {user} = useUserContext();
   const navigate = useNavigate();
+  const {getProfilePicture} = useProfilePicture();
+  const [profilePictures, setProfilePictures] = useState<Record<number, string | null>>({});
 
   useEffect(() => {
     const fetchMedia = async () => {
       const media = await getMediaByTagName(tagName);
       setMedia(media);
-    }
+
+      // Fetch profile pictures for each user_id in media
+      const uniqueUserIds = [...new Set(media.map(item => item.user_id))];
+      const profilePics: Record<number, string | null> = {};
+
+      await Promise.all(uniqueUserIds.map(async (userId) => {
+        const profileData = await getProfilePicture(userId);
+        profilePics[userId] = profileData ? profileData.filename : null;
+      }));
+
+      setProfilePictures(profilePics);
+    };
+
     fetchMedia();
   }, [tagName]);
 
@@ -29,11 +43,14 @@ const TagMedia = () => {
         {media.map((item) => (
           <article
             key={item.media_id}
-            className="flex flex-col w-full max-w-lg bg-gray-800 p-4 rounded-lg shadow-lg mx-auto my-3 space-y-3"
+            className="flex flex-col w-full max-w-lg bg-gray-800 p-4 rounded-lg shadow-lg mx-auto my-10 space-y-3"
           >
             {/* User Info */}
             <div className="flex items-center space-x-3 w-full">
-              <div className="w-10 h-10 bg-gray-700 rounded-full" />
+              <img
+                className="w-10 h-10 bg-gray-700 rounded-full"
+                src={profilePictures[item.user_id] || 'https://robohash.org/' + item.username}
+                alt={item.username}/>
               <div className="text-left">
                 <p className="text-white font-semibold">
                   {user && user.user_id === item.user_id ? (
@@ -62,7 +79,7 @@ const TagMedia = () => {
                 onClick={() => navigate('/single', {state: {item}})}
                 className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
                 src={
-                  item.filename ||
+                  item.thumbnail ||
                   (item.screenshots && item.screenshots[0]) ||
                   undefined
                 }
