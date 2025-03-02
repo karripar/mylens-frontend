@@ -51,7 +51,8 @@ const Single = () => {
           tags.map((tag) => (
             <span
               key={tag}
-              className="text-xs bg-gray-700 text-white px-2 py-1 rounded-md"
+              className="text-xs bg-gray-700 text-white px-2 py-1 rounded-md hover:bg-gray-600 cursor-pointer"  
+              onClick={() => navigate(`/tag/${tag}`)}
             >
               {tag}
             </span>

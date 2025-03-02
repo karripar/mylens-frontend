@@ -43,7 +43,9 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
       likeDispatch({type: 'like', like: userLike})
     } catch (error) {
       likeDispatch({type: 'like', like: null});
-      console.log((error as Error).message);
+      if (import.meta.env.VITE_NODE_ENV === 'development2') {
+        console.error((error as Error).message);
+      }
     }
   }
 
@@ -53,7 +55,9 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
       if (!likes) return;
       likeDispatch({type: 'setLikeCount', count: likes.length});
     } catch (error) {
-      console.log((error as Error).message);
+      if (import.meta.env.VITE_NODE_ENV === 'development2') {
+        console.error((error as Error).message);
+      }
     }
   }
 

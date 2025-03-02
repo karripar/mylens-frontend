@@ -7,7 +7,7 @@ import {useForm} from '../hooks/formHooks';
 
 const Profile = () => {
   const {user} = useUserContext();
-  console.log('User after login:', user);
+  //console.log('User after login:', user);
   const navigate = useNavigate();
   const {getFollowedUsers, getFollowers} = useFollow();
   const {putUserBioAndUsername, getUsernameAvailable} = useUser();
@@ -199,7 +199,7 @@ const Profile = () => {
                 onClick={() => navigate('/single', {state: {item}})}
                 className="w-64 h-64 object-cover rounded-lg cursor-pointer transition-transform duration-300 hover:scale-101"
                 src={
-                  item.filename ||
+                  item.thumbnail ||
                   (item.screenshots && item.screenshots[0]) ||
                   undefined
                 }

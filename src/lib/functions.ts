@@ -8,7 +8,9 @@ const fetchData = async <T>(
   const json = await response.json();
   if (!response.ok) {
     const errorJson = json as unknown as ErrorResponse;
-    console.log('errorJson', errorJson);
+    if (import.meta.env.VITE_NODE_ENV === 'development2') {
+      console.log('errorJson', errorJson);
+    }
     if (errorJson.message) {
       throw new Error(errorJson.message);
     }

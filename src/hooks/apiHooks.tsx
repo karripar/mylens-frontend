@@ -24,8 +24,6 @@ const useMedia = (token?: string, username?: string) => {
       // fetch media items from the API. if token is provided -> fetch only media items that belong to the user
       try {
         // kaikki mediat ilman omistajan tietoja
-        console.log(token);
-        console.log(username);
         let url;
         if (typeof token === 'string' && token.length > 0) {
           url = `${import.meta.env.VITE_MEDIA_API}/media/bytoken`;

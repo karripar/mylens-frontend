@@ -4,7 +4,7 @@ import useUserContext from '../hooks/contextHooks';
 import {MessageCircle} from 'lucide-react';
 import Likes from './Likes';
 import Follows from './Follows';
-import { useMediaTags } from '../hooks/useMediaTags';
+import {useMediaTags} from '../hooks/useMediaTags';
 
 type MediaRowProps = {
   item: MediaItemWithOwner;
@@ -16,8 +16,6 @@ const MediaRow = (props: MediaRowProps) => {
   const {user} = useUserContext();
   const navigate = useNavigate();
   const tags = useMediaTags(item.media_id);
-  console.log(item.thumbnail);
-
 
   return (
     <article className="flex flex-col w-full max-w-lg bg-gray-800 p-3 rounded-lg shadow-lg mx-auto my-3 space-y-3">
@@ -45,7 +43,16 @@ const MediaRow = (props: MediaRowProps) => {
             )
           }
         >
-          <p className="text-white font-semibold hover:text-blue-300">{item.username}</p>
+          <p className="text-white font-semibold hover:text-blue-300">
+            {user && user.user_id === item.user_id ? (
+              <>
+                {item.username}{' '}
+                <span className="text-blue-400 text-xs">- You</span>
+              </>
+            ) : (
+              item.username
+            )}
+          </p>
           <p className="text-xs text-gray-400">
             {new Date(item.created_at).toLocaleString('fi-FI')}
           </p>
@@ -83,7 +90,7 @@ const MediaRow = (props: MediaRowProps) => {
 
       {/* Tags */}
       <div className="flex flex-wrap gap-1">
-        {tags.length > 0 &&
+        {(tags.length > 0 &&
           tags.map((tag) => (
             <span
               key={tag}
@@ -92,7 +99,7 @@ const MediaRow = (props: MediaRowProps) => {
             >
               {tag}
             </span>
-          )) || <span className="text-xs text-gray-400">No tags</span>}
+          ))) || <span className="text-xs text-gray-400">No tags</span>}
       </div>
 
       {/* Caption */}
@@ -102,22 +109,23 @@ const MediaRow = (props: MediaRowProps) => {
       </div>
 
       {/* Admin Actions */}
-      {(user?.user_id === item.user_id || user?.level_name === 'Admin') && (
-        <div className="flex gap-2 pt-2">
-          <button
-            onClick={() => console.log('Modify clicked', item.media_id)}
-            className="flex-1 bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition-all duration-300"
-          >
-            Modify
-          </button>
-          <button
-            onClick={() => console.log('Delete clicked', item.media_id)}
-            className="flex-1 bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 transition-all duration-300"
-          >
-            Delete
-          </button>
-        </div>
-      )}
+{(user?.user_id === item.user_id || user?.level_name === 'Admin') && (
+  <div className="flex gap-2 pt-2">
+    <button
+      onClick={() => console.log('Modify clicked', item.media_id)}
+      className="flex-1 flex items-center justify-center gap-2 bg-gray-200 text-gray-700 py-2 rounded-md hover:bg-gray-300 transition-all duration-200"
+    >
+      Modify
+    </button>
+    <button
+      onClick={() => console.log('Delete clicked', item.media_id)}
+      className="flex-1 flex items-center justify-center gap-2 bg-red-400 text-white py-2 rounded-md hover:bg-red-500 transition-all duration-200"
+    >
+      Delete
+    </button>
+  </div>
+)}
+
     </article>
   );
 };
