@@ -1,4 +1,4 @@
-import {Comment, Follow, MediaResponse, Tag} from 'hybrid-types/DBTypes';
+import {Comment, Follow, MediaResponse, ProfilePicture, Tag} from 'hybrid-types/DBTypes';
 import {
   Like,
   MediaItem,
@@ -527,6 +527,7 @@ const useFollow = () => {
     }
   };
 
+
   return {
     followArray,
     postFollow,
@@ -535,6 +536,50 @@ const useFollow = () => {
     getFollowers,
   };
 };
+
+const useProfilePicture = () => {
+  const postProfilePicture = async (file: UploadResponse, token: string) => {
+    try {
+      const media = {
+        filename: file.data.filename,
+        media_type: file.data.media_type,
+        filesize: file.data.filesize,
+      }
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(media),
+      };
+
+      return await fetchData<UploadResponse>(
+        import.meta.env.VITE_AUTH_API + '/users/profile/picture',
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  const getProfilePicture = async (user_id: number) => {
+    try {
+      const response = await fetchData<ProfilePicture>(
+        import.meta.env.VITE_AUTH_API + '/users/profile/picture/' + user_id,
+      );
+      console.log(response);
+      return response;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  return {postProfilePicture, getProfilePicture};
+};
+
+
 
 export {
   useMedia,
@@ -545,4 +590,5 @@ export {
   useLike,
   useFollow,
   useTags,
+  useProfilePicture,
 };

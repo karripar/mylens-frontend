@@ -1,5 +1,5 @@
 import React, {createContext, useEffect, useState} from "react";
-import { UserWithNoPassword } from "hybrid-types/DBTypes";
+import {UserWithProfilePicture } from "hybrid-types/DBTypes";
 import { useAuthentication, useUser } from "../hooks/apiHooks";
 import { AuthContextType, Credentials } from "../types/localTypes";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 const UserContext = createContext<AuthContextType | null>(null);
 
 const UserProvider = ({children}: {children: React.ReactNode}) => {
-  const [user, setUser] = useState<UserWithNoPassword | null>(null);
+  const [user, setUser] = useState<UserWithProfilePicture | null>(null);
   const {postLogin} = useAuthentication();
   const {getUser} = useUser();
   const navigate = useNavigate();

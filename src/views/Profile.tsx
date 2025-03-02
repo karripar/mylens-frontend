@@ -1,17 +1,21 @@
 import {useEffect, useState} from 'react';
 import useUserContext from '../hooks/contextHooks';
 import {Link, useNavigate} from 'react-router-dom';
-import {useFollow, useUser} from '../hooks/apiHooks';
+import {useFollow, useProfilePicture, useUser} from '../hooks/apiHooks';
 import {useMedia} from '../hooks/apiHooks';
 import {useForm} from '../hooks/formHooks';
+import { ProfilePicture } from 'hybrid-types/DBTypes';
 
 const Profile = () => {
   const {user} = useUserContext();
+  
   //console.log('User after login:', user);
   const navigate = useNavigate();
   const {getFollowedUsers, getFollowers} = useFollow();
   const {putUserBioAndUsername, getUsernameAvailable} = useUser();
+  const {getProfilePicture} = useProfilePicture();
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>(true);
+  const [profilePicture, setProfilePicture] = useState<ProfilePicture | null>(null);
 
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
@@ -42,6 +46,22 @@ const Profile = () => {
     };
 
     fetchFollowData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]); // Refetch when the user context changes
+
+  useEffect(() => {
+    const fetchProfilePicture = async () => {
+      if (!user) return;
+
+      try {
+        const response = await getProfilePicture(user.user_id);
+        setProfilePicture(response);
+      } catch (error) {
+        console.error((error as Error).message);
+      }
+    };
+
+    fetchProfilePicture();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]); // Refetch when the user context changes
 
@@ -92,7 +112,7 @@ const Profile = () => {
           {/* Profile Picture */}
           <div className="relative">
             <img
-              src="https://randomuser.me/api/portraits/men/1.jpg"
+              src={profilePicture?.filename}
               alt=""
               className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover"
             />
