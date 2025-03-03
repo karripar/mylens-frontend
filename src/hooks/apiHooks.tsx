@@ -588,10 +588,14 @@ const useProfilePicture = () => {
         filesize: file.data.filesize,
       }
 
+      if (!user_id || !token) {
+        throw new Error('User id or token missing');
+      }
+
       const options = {
         method: 'PUT',
         headers: {
-          'Authorization': 'Bearer ' + token || '',
+          'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(media),

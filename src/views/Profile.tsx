@@ -81,7 +81,7 @@ const Profile = () => {
     setIsUploading(true);
 
     try {
-      const token = localStorage.getItem('token') || '';
+      const token = localStorage.getItem('token');
       const user_id = user?.user_id || 0;
       if (!token) {
         throw new Error('No token found');
@@ -98,6 +98,7 @@ const Profile = () => {
         throw new Error('File upload failed');
       }
 
+      console.log('token going to putProfilePicture:', token);
       // 3. Set the new profile picture
       const profilePictureResponse = await putProfilePicture(fileResponse, token, user_id);
       console.log('Profile picture uploaded:', profilePictureResponse);
