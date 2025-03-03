@@ -1,7 +1,7 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import useUserContext from '../hooks/contextHooks';
 import {Link, useNavigate} from 'react-router-dom';
-import {useFollow, useProfilePicture, useUser} from '../hooks/apiHooks';
+import {useFile, useFollow, useProfilePicture, useUser} from '../hooks/apiHooks';
 import {useMedia} from '../hooks/apiHooks';
 import {useForm} from '../hooks/formHooks';
 import { ProfilePicture } from 'hybrid-types/DBTypes';
@@ -13,13 +13,17 @@ const Profile = () => {
   const navigate = useNavigate();
   const {getFollowedUsers, getFollowers} = useFollow();
   const {putUserBioAndUsername, getUsernameAvailable} = useUser();
-  const {getProfilePicture} = useProfilePicture();
+  const {getProfilePicture, putProfilePicture} = useProfilePicture();
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const {postProfileFile} = useFile();
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>(true);
   const [profilePicture, setProfilePicture] = useState<ProfilePicture | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const defaultProfilePicture = 'https://robohash.org/' + user?.username;
 
   const initValues = {
     username: '',
@@ -64,6 +68,52 @@ const Profile = () => {
     fetchProfilePicture();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]); // Refetch when the user context changes
+
+  const doProfilePictureUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) {
+      console.error('No file selected');
+      return;
+    }
+
+    const selectedFile = event.target.files[0]; // Get the file from the event
+    console.log('File selected:', selectedFile);
+
+    setIsUploading(true);
+
+    try {
+      const token = localStorage.getItem('token') || '';
+      const user_id = user?.user_id || 0;
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      // 1. Delete the existing profile picture if one exists
+      if (profilePicture) {
+        console.log('Old picture will be deleted:');
+      }
+
+      // 2. Upload the new file
+      const fileResponse = await postProfileFile(selectedFile, token);
+      if (!fileResponse) {
+        throw new Error('File upload failed');
+      }
+
+      // 3. Set the new profile picture
+      const profilePictureResponse = await putProfilePicture(fileResponse, token, user_id);
+      console.log('Profile picture uploaded:', profilePictureResponse);
+
+      // 4. Fetch and update the profile picture in state
+      const newProfilePicture = await getProfilePicture(user?.user_id || 0);
+      setProfilePicture(newProfilePicture);
+
+    } catch (error) {
+      console.error((error as Error).message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+
 
   const doUpdateProfile = async (event?: React.SyntheticEvent) => {
     if (event) event.preventDefault();
@@ -112,13 +162,21 @@ const Profile = () => {
           {/* Profile Picture */}
           <div className="relative">
             <img
-              src={profilePicture?.filename || 'https://robohash.org/' + user?.username}
-              alt=""
+              src={profilePicture?.filename || defaultProfilePicture}
+              alt="Profile"
               className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover"
             />
-            <div className="text-white absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full cursor-pointer hover:bg-blue-400">
-              Edit
-            </div>
+            <label className="text-white absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full cursor-pointer hover:bg-blue-400">
+              {isUploading ? 'Uploading...' : 'Edit'}
+              <input
+                type="file"
+                id="file"
+                accept="image/*"
+                className="hidden"
+                onChange={doProfilePictureUpload}
+                ref={fileRef}
+              />
+            </label>
           </div>
 
           {/* Username */}

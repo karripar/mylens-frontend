@@ -147,7 +147,23 @@ const useFile = () => {
     );
   };
 
-  return {postFile};
+  const postProfileFile = async (file: File, token: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const options = {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+      body: formData,
+    };
+    return await fetchData<UploadResponse>(
+      import.meta.env.VITE_UPLOAD_API + '/profile',
+      options,
+    );
+  };
+
+  return {postFile, postProfileFile};
 };
 
 const useAuthentication = () => {
@@ -564,6 +580,32 @@ const useProfilePicture = () => {
     }
   };
 
+  const putProfilePicture = async (file: UploadResponse, token: string, user_id: number) => {
+    try {
+      const media = {
+        filename: file.data.filename,
+        media_type: file.data.media_type,
+        filesize: file.data.filesize,
+      }
+
+      const options = {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + token || '',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(media),
+      };
+
+      return await fetchData<UploadResponse>(
+        import.meta.env.VITE_AUTH_API + '/users/update/picture/' + user_id,
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
   const getProfilePicture = async (user_id: number) => {
     try {
       const response = await fetchData<ProfilePicture>(
@@ -576,7 +618,24 @@ const useProfilePicture = () => {
     }
   };
 
-  return {postProfilePicture, getProfilePicture};
+  const deleteProfilePicture = async (token: string) => {
+    try {
+      const options = {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      return await fetchData<MessageResponse>(
+        import.meta.env.VITE_AUTH_API + '/users/profile/picture/',
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  return {postProfilePicture, getProfilePicture, deleteProfilePicture, putProfilePicture};
 };
 
 
