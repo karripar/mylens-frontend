@@ -6,12 +6,13 @@ import Profile from './views/Profile';
 import Search from './views/Search';
 import useUserContext from './hooks/contextHooks';
 import Login from './views/Login';
-import { UserProvider } from './contexts/UserContext';
+import UserProvider from './contexts/UserProvider';
 import Upload from './views/Upload';
 import Single from './views/Single';
 import Logout from './views/Logout';
 import VisitProfile from './views/VisitProfile';
 import TagMedia from './views/TagMedia';
+import NotFound from './views/NotFound';
 
 const ProfilePage = () => {
   const {user} = useUserContext();
@@ -35,6 +36,7 @@ const App = () => {
             <Route path="/search" element={<Search/>}></Route>
             <Route path="/logout" element={<Logout/>}></Route>
             <Route path="/tag/:tag" element={<TagMedia/>}></Route>
+            <Route path="*" element={<NotFound/>}></Route>
           </Route>
         </Routes>
         </UserProvider>

@@ -86,7 +86,7 @@ const Home = () => {
           )}
         </div>
 
-        <div className="w-full max-w-lg h-full p-2 rounded-md">
+        <div className="w-full h-full rounded-md">
           {activeFeed === 'normal' ? (
             <>
               {selectedItem && (
@@ -106,7 +106,7 @@ const Home = () => {
           ) : (
             <>
               {user ? (
-                <div className="w-full max-w-lg h-full p-2 rounded-md">
+                <div className="w-full h-full rounded-md">
                   <section>
                     {selectedItem && (
                       <SingleView

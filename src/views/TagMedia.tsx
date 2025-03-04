@@ -35,10 +35,16 @@ const TagMedia = () => {
     };
 
     fetchMedia();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tagName]);
 
   return (
     <>
+    media.length === 0 ? (
+      <h1 className="text-white text-2xl text-center mt-10">
+        No media found with tag {tagName}
+      </h1>
+    ) : (
     <div>
         {media.map((item) => (
           <article

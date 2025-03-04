@@ -18,7 +18,7 @@ const MediaRow = (props: MediaRowProps) => {
   const tags = useMediaTags(item.media_id);
 
   return (
-    <article className="flex flex-col w-full max-w-lg bg-gray-800 p-3 rounded-lg shadow-lg mx-auto my-3 space-y-3">
+    <article className="flex flex-col w-full max-w-xl bg-gray-800 p-3 rounded-lg shadow-lg mx-auto my-3 space-y-3">
       {/* User Info */}
       <div className="flex items-center space-x-3 w-full">
         <img
@@ -107,24 +107,6 @@ const MediaRow = (props: MediaRowProps) => {
         <h4 className="font-semibold my-0.5 ">{item.title}</h4>
         <p>{item.description}</p>
       </div>
-
-      {/* Admin Actions */}
-{(user?.user_id === item.user_id || user?.level_name === 'Admin') && (
-  <div className="flex gap-2 pt-2">
-    <button
-      onClick={() => console.log('Modify clicked', item.media_id)}
-      className="flex-1 flex items-center justify-center gap-2 bg-gray-200 text-gray-700 py-2 rounded-md hover:bg-gray-300 transition-all duration-200"
-    >
-      Modify
-    </button>
-    <button
-      onClick={() => console.log('Delete clicked', item.media_id)}
-      className="flex-1 flex items-center justify-center gap-2 bg-red-400 text-white py-2 rounded-md hover:bg-red-500 transition-all duration-200"
-    >
-      Delete
-    </button>
-  </div>
-)}
 
     </article>
   );

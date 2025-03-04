@@ -38,14 +38,19 @@ const Upload = () => {
       const mediaResponse = await postMedia(fileResponse, inputs, token);
 
       const mediaId = mediaResponse.media_id;
-      const tagList = tags.split(',').map((tag) => tag.trim());
-      await postTags(tagList, mediaId, token);
+      const tagList = (tags || '')
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0); // Remove empty tags from list
 
+      if (tagList.length > 0) {
+        await postTags(tagList, mediaId, token);
+      }
+      
       setUploadResult('Upload successful');
       setFile(null);
       setTags('');
       setInputs(initValues);
-
     } catch (error) {
       console.error((error as Error).message);
       setUploadResult((error as Error).message);
