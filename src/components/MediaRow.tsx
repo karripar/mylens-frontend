@@ -1,16 +1,14 @@
-import {MediaItemWithOwner, ProfilePicture} from 'hybrid-types/DBTypes';
+import {MediaItemWithProfilePicture} from 'hybrid-types/DBTypes';
 import {useNavigate} from 'react-router-dom';
 import useUserContext from '../hooks/contextHooks';
 import {MessageCircle} from 'lucide-react';
 import Likes from './Likes';
 import Follows from './Follows';
 import {useMediaTags} from '../hooks/useMediaTags';
-import { useProfilePicture } from '../hooks/apiHooks';
-import { useEffect, useState } from 'react';
 
 type MediaRowProps = {
-  item: MediaItemWithOwner;
-  setSelectedItem: (item: MediaItemWithOwner | undefined) => void;
+  item: MediaItemWithProfilePicture;
+  setSelectedItem: (item: MediaItemWithProfilePicture | undefined) => void;
 };
 
 const MediaRow = (props: MediaRowProps) => {
@@ -18,23 +16,6 @@ const MediaRow = (props: MediaRowProps) => {
   const {user} = useUserContext();
   const navigate = useNavigate();
   const tags = useMediaTags(item.media_id);
-  const {getProfilePicture} = useProfilePicture();
-  const [profilePicture, setProfilePicture] = useState<ProfilePicture>();
-
-  useEffect(() => {
-    const fetchProfilePicture = async () => {
-      if (!item.user_id) return;
-
-      try {
-        const response = await getProfilePicture(item.user_id);
-        setProfilePicture(response);
-      } catch (error) {
-        console.error((error as Error).message);
-      }
-    }
-    fetchProfilePicture();
-  }
-  , [item.user_id]);
 
   return (
     <article className="flex flex-col w-full max-w-lg bg-gray-800 p-3 rounded-lg shadow-lg mx-auto my-3 space-y-3">
@@ -42,7 +23,7 @@ const MediaRow = (props: MediaRowProps) => {
       <div className="flex items-center space-x-3 w-full">
         <img
           className="w-10 h-10 rounded-full cursor-pointer object-cover"
-          src={profilePicture?.filename || 'https://robohash.org/' + item.username}
+          src={item.profile_picture}
           alt={item.username}
           onClick={() =>
             navigate(

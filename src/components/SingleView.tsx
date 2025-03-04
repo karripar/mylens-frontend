@@ -1,8 +1,8 @@
-import { MediaItemWithOwner } from "hybrid-types/DBTypes";
+import { MediaItemWithProfilePicture } from "hybrid-types/DBTypes";
 
 const SingleView = (props: {
-  item: MediaItemWithOwner | undefined;
-  setSelectedItem: (item: MediaItemWithOwner | undefined) => void;
+  item: MediaItemWithProfilePicture | undefined;
+  setSelectedItem: (item: MediaItemWithProfilePicture | undefined) => void;
 }) => {
   const { item, setSelectedItem } = props;
 

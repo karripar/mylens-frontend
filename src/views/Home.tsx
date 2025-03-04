@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import useUserContext from '../hooks/contextHooks';
 import {useFollow, useMedia} from '../hooks/apiHooks';
-import {Follow, MediaItemWithOwner} from 'hybrid-types/DBTypes';
+import {Follow, MediaItemWithProfilePicture} from 'hybrid-types/DBTypes';
 import MediaRow from '../components/MediaRow';
 import SingleView from '../components/SingleView';
 
@@ -11,9 +11,9 @@ const Home = () => {
   );
   const {user} = useUserContext();
   const {getFollowedUsers} = useFollow();
-  const [followedMedia, setMedia] = useState<MediaItemWithOwner[]>([]);
+  const [followedMedia, setMedia] = useState<MediaItemWithProfilePicture[]>([]);
   const [selectedItem, setSelectedItem] = useState<
-    MediaItemWithOwner | undefined
+    MediaItemWithProfilePicture | undefined
   >(undefined);
   const {mediaArray} = useMedia();
 

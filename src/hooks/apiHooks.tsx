@@ -1,8 +1,7 @@
-import {Comment, Follow, MediaResponse, ProfilePicture, Tag} from 'hybrid-types/DBTypes';
+import {Comment, Follow, MediaItemWithProfilePicture, MediaResponse, ProfilePicture, Tag} from 'hybrid-types/DBTypes';
 import {
   Like,
   MediaItem,
-  MediaItemWithOwner,
   UserWithNoPassword,
 } from 'hybrid-types/DBTypes';
 import {useEffect, useState} from 'react';
@@ -17,7 +16,7 @@ import {
 } from 'hybrid-types/MessageTypes';
 
 const useMedia = (token?: string, username?: string) => {
-  const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
+  const [mediaArray, setMediaArray] = useState<MediaItemWithProfilePicture[]>([]);
 
   useEffect(() => {
     const getMedia = async () => {
@@ -41,16 +40,22 @@ const useMedia = (token?: string, username?: string) => {
         };
         const media = await fetchData<MediaItem[]>(url, options);
         // haetaan omistajat id:n perusteella
-        const mediaWithOwner: MediaItemWithOwner[] = await Promise.all(
+        const mediaWithOwner: MediaItemWithProfilePicture[] = await Promise.all(
           media.map(async (item) => {
             const owner = await fetchData<UserWithNoPassword>(
               import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
               options,
             );
 
-            const mediaItem: MediaItemWithOwner = {
+            const profilePicture = await fetchData<ProfilePicture>(
+              import.meta.env.VITE_AUTH_API + '/users/profile/picture/' + item.user_id,
+              options,
+            );
+
+            const mediaItem: MediaItemWithProfilePicture = {
               ...item,
               username: owner.username,
+              profile_picture: profilePicture?.filename || 'https://robohash.org/' + owner.username,
             };
             return mediaItem;
           }),
@@ -58,7 +63,7 @@ const useMedia = (token?: string, username?: string) => {
 
         console.log(mediaWithOwner);
 
-        setMediaArray(mediaWithOwner);
+        setMediaArray(mediaWithOwner.reverse());
       } catch (error) {
         console.error((error as Error).message);
       }
@@ -108,15 +113,20 @@ const useMedia = (token?: string, username?: string) => {
       const response = await fetchData<MediaItem[]>(
         import.meta.env.VITE_MEDIA_API + '/media/bytagname/' + tag,
       );
-      const mediaWithOwner: MediaItemWithOwner[] = await Promise.all(
+      const mediaWithOwner: MediaItemWithProfilePicture[] = await Promise.all(
         response.map(async (item) => {
           const owner = await fetchData<UserWithNoPassword>(
             import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
           );
 
-          const mediaItem: MediaItemWithOwner = {
+          const profilePicture = await fetchData<ProfilePicture>(
+            import.meta.env.VITE_AUTH_API + '/users/profile/picture/' + item.user_id,
+          );
+
+          const mediaItem: MediaItemWithProfilePicture = {
             ...item,
             username: owner.username,
+            profile_picture: profilePicture?.filename || 'https://robohash.org/' + owner.username,
           };
           return mediaItem;
         }),

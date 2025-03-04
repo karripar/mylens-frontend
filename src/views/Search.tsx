@@ -30,6 +30,7 @@ const Search = () => {
   const navigate = useNavigate();
   const {getProfilePicture} = useProfilePicture();
   const [profilePicture, setProfilePicture] = useState<ProfilePicture>();
+  const [profilePictures, setProfilePictures] = useState<Record<number, string>>({});
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -60,6 +61,7 @@ const Search = () => {
     }
     fetchProfilePicture();
   }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   , [user]);
 
   const handleSearch = async () => {
@@ -71,13 +73,29 @@ const Search = () => {
     };
 
     try {
-      console.log('Search terms:', searchCategory, searchQuery);
-
       if (searchCategory === 'user') {
         const query = `${import.meta.env.VITE_AUTH_API}/users/search/byusername?username=${encodeURIComponent(searchQuery)}`;
         const response = await fetchData<UserWithNoSensitiveInfo[]>(query, options);
         setUserSearchResults(response);
-        setMediaSearchResults([]); // Clear media results
+        setMediaSearchResults([]);
+
+        // Fetch profile pictures for each user
+        const picturePromises = response.map(async (userItem) => {
+          try {
+            const picResponse = await getProfilePicture(userItem.user_id);
+            return { userId: userItem.user_id, filename: picResponse?.filename };
+          } catch {
+            return { userId: userItem.user_id, filename: '' }; // Handle missing pictures
+          }
+        });
+
+        const pictures = await Promise.all(picturePromises);
+        const profilePicMap = pictures.reduce((acc, pic) => {
+          acc[pic.userId] = pic.filename || `https://robohash.org/${pic.userId}`;
+          return acc;
+        }, {} as Record<number, string>);
+
+        setProfilePictures(profilePicMap);
       } else {
         const query = `${import.meta.env.VITE_MEDIA_API}/media/search?search=${encodeURIComponent(searchQuery)}&searchBy=${encodeURIComponent(searchCategory)}`;
         const response = await fetchData<MediaItem[]>(query, options);
@@ -93,13 +111,15 @@ const Search = () => {
         );
 
         setMediaSearchResults(mediaWithOwner);
-        setUserSearchResults([]); // Clear user results
+        setUserSearchResults([]);
       }
-      setHasSearched(true); // Mark search as completed
+
+      setHasSearched(true);
     } catch (error) {
       console.error(error);
     }
   };
+
 
   return (
     <>
@@ -161,14 +181,22 @@ const Search = () => {
             >
               {/* Avatar */}
               <img
-                src={profilePicture?.filename || 'https://robohash.org/' + userItem.username}
+                src={profilePictures[userItem.user_id] || `https://robohash.org/${userItem.username}`}
+                alt={userItem.username}
                 className="w-10 h-10 min-w-10 rounded-full flex-shrink-0"
               />
 
               {/* User Details */}
               <div className="flex-1 text-start">
                 <p className="text-white font-semibold text-sm sm:text-base">
-                  {userItem.username}
+                  {user && user.user_id === userItem.user_id ? (
+                    <>
+                      {userItem.username}{' '}
+                      <span className="text-blue-400 text-xs">- You</span>
+                    </>
+                  ) : (
+                    userItem.username
+                  )}
                 </p>
                 <p className="text-gray-400 text-xs sm:text-sm">
                   {userItem.level_name}
@@ -197,7 +225,10 @@ const Search = () => {
             >
               {/* User Info */}
               <div className="flex items-center space-x-3 w-full">
-                <div className="w-10 h-10 bg-gray-700 rounded-full" />
+                <img className="w-10 h-10 bg-gray-700 rounded-full"
+                  src={profilePictures[item.user_id] || profilePicture?.filename || `https://robohash.org/${item.user_id}`}
+                  alt={item.username}
+                />
                 <div className="text-left">
                   <p className="text-white font-semibold">
                     {user && user.user_id === item.user_id ? (
