@@ -123,7 +123,7 @@ const Search = () => {
 
   return (
     <>
-      <h1>Search</h1>
+      <h1 className="text-gray-100 mt-8 mb-4">Search</h1>
 
       {/* Search Category Tabs */}
       <div className="flex justify-center space-x-2 mb-4">
