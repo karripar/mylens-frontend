@@ -5,6 +5,7 @@ import {MessageCircle} from 'lucide-react';
 import Likes from './Likes';
 import Follows from './Follows';
 import {useMediaTags} from '../hooks/useMediaTags';
+import Saves from './Saves';
 
 type MediaRowProps = {
   item: MediaItemWithProfilePicture;
@@ -79,6 +80,7 @@ const MediaRow = (props: MediaRowProps) => {
       </div>
 
       {/* Actions */}
+      {user && (
       <div className="flex items-center justify-items-start space-x-3 w-full px-2">
         <Likes aria-label="like the post" item={item} />
         <MessageCircle
@@ -86,7 +88,9 @@ const MediaRow = (props: MediaRowProps) => {
           className="w-6 h-6 text-gray-400 cursor-pointer hover:opacity-85 "
           onClick={() => navigate('/single', {state: {item}})}
         />
+        <Saves aria-label="save the post" item={item} />
       </div>
+      )}
 
       {/* Tags */}
       <div className="flex flex-wrap gap-1">

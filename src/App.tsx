@@ -13,6 +13,7 @@ import Logout from './views/Logout';
 import VisitProfile from './views/VisitProfile';
 import TagMedia from './views/TagMedia';
 import NotFound from './views/NotFound';
+import Saved from './views/Saved';
 
 const ProfilePage = () => {
   const {user} = useUserContext();
@@ -36,6 +37,7 @@ const App = () => {
             <Route path="/search" element={<Search/>}></Route>
             <Route path="/logout" element={<Logout/>}></Route>
             <Route path="/tag/:tag" element={<TagMedia/>}></Route>
+            <Route path="/saved" element={<Saved/>}></Route>
             <Route path="*" element={<NotFound/>}></Route>
           </Route>
         </Routes>

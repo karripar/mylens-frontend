@@ -39,7 +39,6 @@ const Follows = ({ userId }: { userId: number }) => {
 
     try {
       const userFollows = await getFollowedUsers(token);
-      console.log(userFollows);
       const userFollow = userFollows.length > 0 ? userFollows[0] : null;
       followDispatch({ type: "follow", follow: userFollow });
     } catch (error) {

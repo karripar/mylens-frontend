@@ -137,7 +137,24 @@ const useMedia = (token?: string, username?: string) => {
     }
   };
 
-  return {mediaArray, postMedia, getMediaByTagName};
+  const deleteMedia = async (media_id: number, token: string) => {
+    try {
+      const options = {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      return await fetchData<MessageResponse>(
+        import.meta.env.VITE_MEDIA_API + '/media/byid/' + media_id,
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  return {mediaArray, postMedia, getMediaByTagName, deleteMedia};
 };
 
 const useFile = () => {
@@ -652,6 +669,129 @@ const useProfilePicture = () => {
   return {postProfilePicture, getProfilePicture, deleteProfilePicture, putProfilePicture};
 };
 
+const useSavedMedia = () => {
+  const [savedMediaArray, setSavedMediaArray] = useState<MediaItemWithProfilePicture[]>([]);
+
+  useEffect(() => {
+  const getSavedMediaByUserId = async (token: string) => {
+    try {
+      const options = {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      const response = await fetchData<MediaItem[]>(
+        import.meta.env.VITE_MEDIA_API + '/favorites/byuser',
+        options,
+      );
+
+      const mediaWithOwner: MediaItemWithProfilePicture[] = await Promise.all(
+        response.map(async (item) => {
+          const owner = await fetchData<UserWithNoPassword>(
+            import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
+            options,
+          );
+
+          const profilePicture = await fetchData<ProfilePicture>(
+            import.meta.env.VITE_AUTH_API + '/users/profile/picture/' + item.user_id,
+            options,
+          );
+
+          const mediaItem: MediaItemWithProfilePicture = {
+            ...item,
+            username: owner.username,
+            profile_picture: profilePicture?.filename || 'https://robohash.org/' + owner.username,
+          };
+          return mediaItem;
+        }),
+      );
+      setSavedMediaArray(mediaWithOwner);
+      return mediaWithOwner;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  getSavedMediaByUserId(localStorage.getItem('token') || '');
+  }, []);
+
+
+  const postSavedMedia = async (media_id: number, token: string) => {
+    try {
+      const options = {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({media_id}),
+      };
+      return await fetchData<MessageResponse>(
+        import.meta.env.VITE_MEDIA_API + '/favorites',
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  const removeSavedMedia = async (media_id: number, token: string) => {
+    try {
+      const options = {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      return await fetchData<MessageResponse>(
+        import.meta.env.VITE_MEDIA_API + '/favorites/bymedia/' + media_id,
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  const getIfSaved = async (media_id: number, token: string) => {
+    try {
+      const options = {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      const response = await fetchData<{ favorite: boolean }>(
+        import.meta.env.VITE_MEDIA_API + '/favorites/byuser/' + media_id,
+        options
+      );
+
+      return response.favorite ?? false; // Ensure it returns a boolean
+    } catch (error) {
+      console.error(`Error checking if media ${media_id} is saved:`, (error as Error).message);
+      return false; // Default to false on error
+    }
+  };
+
+
+
+  const getSaveCountByMediaId = async (media_id: number) => {
+    try {
+      const response = await fetchData<{ count: number }>(
+        import.meta.env.VITE_MEDIA_API + '/favorites/bymedia/' + media_id
+      );
+
+      return response.count ?? 0; // Ensure it returns a number
+    } catch (error) {
+      console.error(`Error fetching save count for media ${media_id}:`, (error as Error).message);
+      return 0; // Default to 0 on error
+    }
+  };
+
+
+
+
+  return {savedMediaArray, postSavedMedia, removeSavedMedia, getIfSaved, getSaveCountByMediaId};
+}
+
 
 
 export {
@@ -664,4 +804,5 @@ export {
   useFollow,
   useTags,
   useProfilePicture,
+  useSavedMedia,
 };
