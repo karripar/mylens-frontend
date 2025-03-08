@@ -1,28 +1,36 @@
 import React, {useEffect, useRef, useState} from 'react';
 import useUserContext from '../hooks/contextHooks';
 import {Link, useNavigate} from 'react-router-dom';
-import {useFile, useFollow, useProfilePicture, useUser} from '../hooks/apiHooks';
+import {
+  useFile,
+  useFollow,
+  useProfilePicture,
+  useUser,
+} from '../hooks/apiHooks';
 import {useMedia} from '../hooks/apiHooks';
 import {useForm} from '../hooks/formHooks';
-import { ProfilePicture } from 'hybrid-types/DBTypes';
+import {ProfilePicture} from 'hybrid-types/DBTypes';
 
 const Profile = () => {
-  const {user} = useUserContext();
+  const {user} = useUserContext(); // Destructure setUser from context
 
-  //console.log('User after login:', user);
   const navigate = useNavigate();
   const {getFollowedUsers, getFollowers} = useFollow();
-  const {putUserBioAndUsername, getUsernameAvailable} = useUser();
+  const {putUserBioAndUsername, getUsernameAvailable, deleteUser} = useUser();
   const {getProfilePicture, putProfilePicture} = useProfilePicture();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const {postProfileFile} = useFile();
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>(true);
-  const [profilePicture, setProfilePicture] = useState<ProfilePicture | null>(null);
+  const [profilePicture, setProfilePicture] = useState<ProfilePicture | null>(
+    null,
+  );
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isEditingUsername, setIsEditingUsername] = useState<boolean>(false);
+  const [isEditingBio, setIsEditingBio] = useState<boolean>(false);
   const defaultProfilePicture = 'https://robohash.org/' + user?.username;
 
   const initValues = {
@@ -69,7 +77,9 @@ const Profile = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]); // Refetch when the user context changes
 
-  const doProfilePictureUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const doProfilePictureUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     if (!event.target.files || event.target.files.length === 0) {
       console.error('No file selected');
       return;
@@ -100,13 +110,16 @@ const Profile = () => {
 
       console.log('token going to putProfilePicture:', token);
       // 3. Set the new profile picture
-      const profilePictureResponse = await putProfilePicture(fileResponse, token, user_id);
+      const profilePictureResponse = await putProfilePicture(
+        fileResponse,
+        token,
+        user_id,
+      );
       console.log('Profile picture uploaded:', profilePictureResponse);
 
       // 4. Fetch and update the profile picture in state
       const newProfilePicture = await getProfilePicture(user?.user_id || 0);
       setProfilePicture(newProfilePicture);
-
     } catch (error) {
       console.error((error as Error).message);
     } finally {
@@ -114,21 +127,22 @@ const Profile = () => {
     }
   };
 
-
-
   const doUpdateProfile = async (event?: React.SyntheticEvent) => {
     if (event) event.preventDefault();
     try {
       const token = localStorage.getItem('token') || '';
 
       const content = {
-        username: inputs.username,
-        bio: inputs.bio,
+        username: inputs.username || user?.username || '',
+        bio: inputs.bio || user?.bio || '',
       };
 
       const response = await putUserBioAndUsername(content, token);
       console.log('Profile updated:', response);
       setIsEditing(false);
+      setIsEditingUsername(false);
+      setIsEditingBio(false);
+      navigate('/user');
     } catch (error) {
       console.error((error as Error).message);
     }
@@ -155,6 +169,18 @@ const Profile = () => {
     main();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputs.username]);
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm('Are you sure you want to delete your account?')) {
+      try {
+        const token = localStorage.getItem('token') || '';
+        await deleteUser(token);
+        navigate('/logout');
+      } catch (error) {
+        console.error((error as Error).message);
+      }
+    }
+  };
 
   return (
     <>
@@ -205,13 +231,13 @@ const Profile = () => {
           {/* Action buttons */}
           <div className="w-full mt-4 flex justify-center space-x-4">
             <button
-              className="px-6 py-2 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition duration-200"
+              className="flex-1 sm:flex-none px-6 py-2 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition duration-200 text-center"
               onClick={() => setIsEditing(true)}
             >
               Edit Profile
             </button>
-            <Link to="/logout">
-              <button className="px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-200 transition duration-200">
+            <Link to="/logout" className="flex-1 sm:flex-none">
+              <button className="w-full px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-200 transition duration-200 text-center">
                 Logout
               </button>
             </Link>
@@ -225,6 +251,49 @@ const Profile = () => {
           <div className="bg-white p-10 rounded-lg shadow-lg">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Edit Profile
+            </h2>
+            <div className="flex justify-evenly">
+              <button
+                className="px-6 py-2 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition duration-200"
+                onClick={() => {
+                  setIsEditingUsername(true);
+                  setIsEditing(false);
+                }}
+              >
+                Edit Username
+              </button>
+              <button
+                className="px-6 py-2 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition duration-200"
+                onClick={() => {
+                  setIsEditingBio(true);
+                  setIsEditing(false);
+                }}
+              >
+                Edit Bio
+              </button>
+            </div>
+            <button
+              onClick={handleDeleteAccount}
+              className="mt-4 px-6 py-2 bg-red-500 text-white rounded-full font-semibold hover:bg-red-600 transition duration-200"
+            >
+              Delete Account
+            </button>
+            <button
+              type="button"
+              className="mt-4 px-6 py-2 bg-gray-400 text-gray-700 rounded-full font-semibold hover:bg-gray-300 transition duration-200"
+              onClick={() => setIsEditing(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isEditingUsername && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-10 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Edit Username
             </h2>
             <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
               <input
@@ -240,13 +309,38 @@ const Profile = () => {
                 value={inputs.username}
                 onChange={handleInputChange}
               />
+              <button
+                type="submit"
+                className="px-6 py-2 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition duration-200"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                className="px-6 py-2 bg-gray-400 text-gray-700 rounded-full font-semibold hover:bg-gray-300 transition duration-200"
+                onClick={() => setIsEditingUsername(false)}
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isEditingBio && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-10 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Edit Bio
+            </h2>
+            <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
               <textarea
                 name="bio"
                 className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-blue-500 min-h-30 max-h-100"
                 minLength={3}
                 maxLength={300}
                 placeholder="Bio"
-                value={user?.bio || inputs.bio}
+                value={inputs.bio}
                 onChange={handleInputChange}
               />
               <button
@@ -258,7 +352,7 @@ const Profile = () => {
               <button
                 type="button"
                 className="px-6 py-2 bg-gray-400 text-gray-700 rounded-full font-semibold hover:bg-gray-300 transition duration-200"
-                onClick={() => setIsEditing(false)}
+                onClick={() => setIsEditingBio(false)}
               >
                 Cancel
               </button>

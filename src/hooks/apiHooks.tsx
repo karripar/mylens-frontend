@@ -315,6 +315,23 @@ const useUser = () => {
     }
   };
 
+  const deleteUser = async (token: string) => {
+    try {
+      const options = {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      return await fetchData<MessageResponse>(
+        import.meta.env.VITE_AUTH_API + '/users',
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
   return {
     getUser,
     postRegister,
@@ -322,6 +339,7 @@ const useUser = () => {
     getEmailAvailable,
     getUserByUserId,
     putUserBioAndUsername,
+    deleteUser,
   };
 };
 

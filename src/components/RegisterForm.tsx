@@ -85,6 +85,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
               placeholder="Username"
               value={inputs.username}
               onChange={handleInputChange}
+              autoComplete="off"
               required
               className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
                 usernameAvailable ? 'border-green-500' : 'border-red-500'
@@ -99,6 +100,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
               type="email"
               name="email"
               placeholder="Email"
+              autoComplete="off"
               value={inputs.email}
               onChange={handleInputChange}
               required
@@ -117,6 +119,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
               placeholder="Password"
               value={inputs.password}
               onChange={handleInputChange}
+              autoComplete="off"
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
