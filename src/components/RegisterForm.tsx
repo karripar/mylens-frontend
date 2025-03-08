@@ -1,18 +1,27 @@
-import { useEffect, useState } from "react";
-import { useUser } from "../hooks/apiHooks";
-import { useForm } from "../hooks/formHooks";
-import { RegisterCredentials } from "../types/localTypes";
+import {useEffect, useState} from 'react';
+import {useUser} from '../hooks/apiHooks';
+import {useForm} from '../hooks/formHooks';
+import {RegisterCredentials} from '../types/localTypes';
+import useUserContext from '../hooks/contextHooks';
 
 interface RegisterFormProps {
   toggleRegister: () => void;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({toggleRegister}) => {
   const {postRegister, getUsernameAvailable, getEmailAvailable} = useUser();
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [emailAvailable, setEmailAvailable] = useState(true);
-  const [message, setMessage] = useState<{text: string, type: "success" | "error"} | null>(null);
-  const initValues: RegisterCredentials = {username: '', email: '', password: ''};
+  const [message, setMessage] = useState<{
+    text: string;
+    type: 'success' | 'error';
+  } | null>(null);
+  const initValues: RegisterCredentials = {
+    username: '',
+    email: '',
+    password: '',
+  };
+  const {handleLogin} = useUserContext();
 
   const doRegister = async () => {
     try {
@@ -20,15 +29,25 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
       if (!response) {
         throw new Error('Registration failed');
       }
-      setMessage({text: 'Registration successful, you may log in!', type: 'success'});
+      setMessage({
+        text: 'Registration successful, you may log in!',
+        type: 'success',
+      });
       console.log('Registration successful');
+
+      const loginInputs = {email: inputs.email, password: inputs.password};
+
+      await handleLogin(loginInputs);
     } catch (error) {
       console.error((error as Error).message);
       setMessage({text: (error as Error).message, type: 'error'});
     }
   };
 
-  const {handleSubmit, handleInputChange, inputs} = useForm(doRegister, initValues);
+  const {handleSubmit, handleInputChange, inputs} = useForm(
+    doRegister,
+    initValues,
+  );
 
   useEffect(() => {
     const main = async () => {
@@ -68,61 +87,65 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
     <>
       <div className="flex flex-col items-center justify-center min-h-1/2 bg-gray-900 p-4 my-20">
         <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6">
-          <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">Register</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
+            Register
+          </h2>
           {message && (
-            <p className={`text-${message.type === 'success' ? 'green' : 'red'}-500 text-center`}>
+            <p
+              className={`text-${message.type === 'success' ? 'green' : 'red'}-500 text-center`}
+            >
               {message.text}
             </p>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="justify-start text-start">
-            <label htmlFor="username" className="text-gray-800 text-sm">
-              Username
-            </label>
-            <input
-              type="text"
-              name="username"
-              placeholder="Username"
-              value={inputs.username}
-              onChange={handleInputChange}
-              autoComplete="off"
-              required
-              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-                usernameAvailable ? 'border-green-500' : 'border-red-500'
-              }`}
-            />
+              <label htmlFor="username" className="text-gray-800 text-sm">
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                value={inputs.username}
+                onChange={handleInputChange}
+                autoComplete="off"
+                required
+                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                  usernameAvailable ? 'border-green-500' : 'border-red-500'
+                }`}
+              />
             </div>
             <div className="justify-start text-start">
-            <label htmlFor="email" className="text-gray-800 text-sm">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              autoComplete="off"
-              value={inputs.email}
-              onChange={handleInputChange}
-              required
-              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-                emailAvailable ? 'border-green-500' : 'border-red-500'
-              }`}
-            />
+              <label htmlFor="email" className="text-gray-800 text-sm">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                autoComplete="off"
+                value={inputs.email}
+                onChange={handleInputChange}
+                required
+                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                  emailAvailable ? 'border-green-500' : 'border-red-500'
+                }`}
+              />
             </div>
             <div className="justify-start text-start">
-            <label htmlFor="password" className="text-gray-800 text-sm">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={inputs.password}
-              onChange={handleInputChange}
-              autoComplete="off"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
+              <label htmlFor="password" className="text-gray-800 text-sm">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={inputs.password}
+                onChange={handleInputChange}
+                autoComplete="off"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
             </div>
             <button
               type="submit"
@@ -140,7 +163,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleRegister }) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default RegisterForm;

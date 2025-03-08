@@ -34,6 +34,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
       navigate('/');
     } catch (error) {
       console.error((error as Error).message);
+      throw new Error('Login failed');
     }
   };
 

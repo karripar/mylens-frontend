@@ -19,6 +19,7 @@ const likeInitialState: LikeState = {
   userLike: null,
 };
 
+// Reducer function for the like state
 const likeReducer = (state: LikeState, action: LikeAction): LikeState => {
   switch (action.type) {
     case 'setLikeCount':
@@ -38,6 +39,7 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
     const token = localStorage.getItem('token');
     if (!token || !item) return;
 
+    // Get the user's like for the item
     try {
       const userLike = await getUserLike(item.media_id, token);
       likeDispatch({type: 'like', like: userLike})
@@ -73,7 +75,7 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
       if (!token || !item) return;
 
       if (likeState.userLike) {
-        await removeLike(likeState.userLike.like_id, token);
+        await removeLike(likeState.userLike.like_id, token); // remove like
         likeDispatch({type: 'like', like: null});
         likeDispatch({type: 'setLikeCount', count: likeState.count - 1});
       } else {
@@ -87,6 +89,7 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
   }
 };
 
+// Return the JSX for the component
 return (
   <>
   <p className="text-gray-100">{likeState.count}</p>

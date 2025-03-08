@@ -12,7 +12,7 @@ import {useForm} from '../hooks/formHooks';
 import {ProfilePicture} from 'hybrid-types/DBTypes';
 
 const Profile = () => {
-  const {user} = useUserContext(); // Destructure setUser from context
+  const {user} = useUserContext();
 
   const navigate = useNavigate();
   const {getFollowedUsers, getFollowers} = useFollow();
@@ -139,10 +139,11 @@ const Profile = () => {
 
       const response = await putUserBioAndUsername(content, token);
       console.log('Profile updated:', response);
+
       setIsEditing(false);
       setIsEditingUsername(false);
       setIsEditingBio(false);
-      navigate('/user');
+
     } catch (error) {
       console.error((error as Error).message);
     }
@@ -231,13 +232,13 @@ const Profile = () => {
           {/* Action buttons */}
           <div className="w-full mt-4 flex justify-center space-x-4">
             <button
-              className="flex-1 sm:flex-none px-6 py-2 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition duration-200 text-center"
+              className="w-full sm:w-auto min-w-[140px] px-6 py-2 h-12 flex items-center justify-center bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition duration-200"
               onClick={() => setIsEditing(true)}
             >
               Edit Profile
             </button>
-            <Link to="/logout" className="flex-1 sm:flex-none">
-              <button className="w-full px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-200 transition duration-200 text-center">
+            <Link to="/logout" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto min-w-[140px] px-6 py-2 h-12 flex items-center justify-center border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-200 transition duration-200">
                 Logout
               </button>
             </Link>
