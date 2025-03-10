@@ -9,13 +9,13 @@ import {
 import {useComment} from '../hooks/apiHooks';
 import {formatDate} from '../lib/functions';
 import {CommentWithReplies, CommentWithUsername} from 'hybrid-types/DBTypes';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
-const Comments = ({ item }: { item: MediaItemWithOwner }) => {
+const Comments = ({item}: {item: MediaItemWithOwner}) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { user } = useUserContext();
-  const { comments, setComments } = useCommentStore();
-  const { postComment, getCommentsByMediaId } = useComment();
+  const {user} = useUserContext();
+  const {comments, setComments} = useCommentStore();
+  const {postComment, getCommentsByMediaId} = useComment();
   const [replyToCommentId, setReplyToCommentId] = useState<number | null>(null);
   const navigate = useNavigate();
 
@@ -43,7 +43,10 @@ const Comments = ({ item }: { item: MediaItemWithOwner }) => {
     setInputs(initValues);
   };
 
-  const handleReply = async (event: React.FormEvent<HTMLFormElement>, comment: CommentWithUsername) => {
+  const handleReply = async (
+    event: React.FormEvent<HTMLFormElement>,
+    comment: CommentWithUsername,
+  ) => {
     event.preventDefault();
     if (!item || !replyToCommentId || inputs.comment_text.trim() === '') return;
 
@@ -64,7 +67,6 @@ const Comments = ({ item }: { item: MediaItemWithOwner }) => {
       if (!response) return;
 
       setComments(groupComments(response));
-
     } catch (error) {
       console.error(error);
     }
@@ -74,7 +76,10 @@ const Comments = ({ item }: { item: MediaItemWithOwner }) => {
     setReplyToCommentId(null);
   };
 
-  const { handleSubmit, handleInputChange, inputs, setInputs } = useForm(doComment, initValues);
+  const {handleSubmit, handleInputChange, inputs, setInputs} = useForm(
+    doComment,
+    initValues,
+  );
 
   const getComments = async () => {
     try {
@@ -88,19 +93,26 @@ const Comments = ({ item }: { item: MediaItemWithOwner }) => {
     }
   };
 
-  const groupComments = (comments: CommentWithUsername[] = []): CommentWithUsernameAndReplies[] => {
-    const commentMap: Record<number, CommentWithUsername & { replies: CommentWithUsername[] }> = {};
+  const groupComments = (
+    comments: CommentWithUsername[] = [],
+  ): CommentWithUsernameAndReplies[] => {
+    const commentMap: Record<
+      number,
+      CommentWithUsername & {replies: CommentWithUsername[]}
+    > = {};
     const rootComments: CommentWithUsernameAndReplies[] = [];
 
     comments.forEach((comment) => {
       // Ensure replies is initialized as an empty array
-      commentMap[comment.comment_id] = { ...comment, replies: [] };
+      commentMap[comment.comment_id] = {...comment, replies: []};
     });
 
     comments.forEach((comment) => {
       if (comment.reference_comment_id) {
         // Push replies to the parent comment's 'replies' array
-        commentMap[comment.reference_comment_id]?.replies.push(commentMap[comment.comment_id]);
+        commentMap[comment.reference_comment_id]?.replies.push(
+          commentMap[comment.comment_id],
+        );
       } else {
         // Add root comments (top-level comments)
         rootComments.push(commentMap[comment.comment_id]);
@@ -112,28 +124,33 @@ const Comments = ({ item }: { item: MediaItemWithOwner }) => {
 
   const renderComments = (comments: CommentWithUsernameAndReplies[]) => {
     return comments.map((comment) => (
-      <div key={comment.comment_id} className="flex flex-col items-start gap-3 w-full p-4 rounded-xl bg-gray-900 shadow-md">
+      <div
+        key={comment.comment_id}
+        className="flex flex-col items-start gap-3 w-full p-4 rounded-xl bg-gray-900 shadow-md"
+      >
         <p className="text-white font-medium text-lg">
-        <span
-          onClick={() =>
-            navigate(
-              user?.username === comment.username
-                ? '/user'
-                : `/profile/${comment.username}`
-            )
-          }
-          className="cursor-pointer text-amber-300 hover:text-amber-500"
-        >
-          {comment.username}
-        </span>
-      </p>
-        <p className="text-gray-300 opacity-80 break-words w-full text-left">{comment.comment_text}</p>
+          <span
+            onClick={() =>
+              navigate(
+                user?.username === comment.username
+                  ? '/user'
+                  : `/profile/${comment.username}`,
+              )
+            }
+            className="cursor-pointer text-amber-300 hover:text-amber-500"
+          >
+            {comment.username}
+          </span>
+        </p>
+        <p className="text-gray-300 opacity-80 break-words w-full text-left">
+          {comment.comment_text}
+        </p>
 
         {user && (
           <button
             onClick={() => {
               setReplyToCommentId(comment.comment_id);
-              setInputs({ comment_text: `@${comment.username} ` }); // Set the input with @username
+              setInputs({comment_text: `@${comment.username} `}); // Set the input with @username
             }}
             className="text-amber-300 hover:text-amber-500 cursor-pointer transition-colors duration-200 ease-in-out px-2 py-1 text-sm font-medium"
           >
@@ -166,7 +183,9 @@ const Comments = ({ item }: { item: MediaItemWithOwner }) => {
 
         <div className="flex justify-between w-full">
           <p className="text-gray-500">
-            {comment.created_at ? formatDate(comment.created_at.toString(), 'fi-FI') : 'Unknown date'}
+            {comment.created_at
+              ? formatDate(comment.created_at.toString(), 'fi-FI')
+              : 'Unknown date'}
           </p>
         </div>
 
@@ -189,7 +208,10 @@ const Comments = ({ item }: { item: MediaItemWithOwner }) => {
   return (
     <>
       {user ? (
-        <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center gap-2 w-full mt-5">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center justify-center gap-2 w-full mt-5"
+        >
           <input
             ref={inputRef}
             type="text"
@@ -218,4 +240,3 @@ const Comments = ({ item }: { item: MediaItemWithOwner }) => {
 };
 
 export default Comments;
-

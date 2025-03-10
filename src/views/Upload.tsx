@@ -34,6 +34,11 @@ const Upload = () => {
       if (!file || !token) {
         throw new Error('File or token missing');
       }
+
+      if (!file.type.includes('image') && !file.type.includes('video')) {
+        setUploadResult('Invalid file type. Please upload an image or video.');
+        return;
+      }
       const fileResponse = await postFile(file, token);
       const mediaResponse = await postMedia(fileResponse, inputs, token);
 
@@ -46,7 +51,7 @@ const Upload = () => {
       if (tagList.length > 0) {
         await postTags(tagList, mediaId, token);
       }
-      
+
       setUploadResult('Upload successful');
       setFile(null);
       setTags('');
@@ -56,6 +61,9 @@ const Upload = () => {
       setUploadResult((error as Error).message);
     } finally {
       setUploading(false);
+      setFile(null);
+      setTags('');
+      setInputs(initValues);
     }
   };
 
@@ -95,11 +103,19 @@ const Upload = () => {
                   className="relative flex h-52 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-100 p-6 text-center text-gray-600 transition duration-200 hover:border-amber-500 hover:bg-gray-50"
                 >
                   {file ? (
-                    <img
-                      src={URL.createObjectURL(file)}
-                      className="absolute inset-0 h-full w-full rounded-xl object-cover"
-                      alt="Preview"
-                    />
+                    file.type.includes('video') ? (
+                      <video
+                        src={URL.createObjectURL(file)}
+                        className="absolute inset-0 h-full w-full rounded-xl object-cover"
+                        controls
+                      />
+                    ) : (
+                      <img
+                        src={URL.createObjectURL(file)}
+                        className="absolute inset-0 h-full w-full rounded-xl object-cover"
+                        alt="Preview"
+                      />
+                    )
                   ) : (
                     <>
                       <svg

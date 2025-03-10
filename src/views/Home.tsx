@@ -59,7 +59,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex flex-col items-center p-4 h-4/5">
+      <div className="flex flex-col items-center mb-20 p-4 h-4/5">
         <div className="flex space-x-4 mb-4">
           <button
             className={`px-4 py-2 text-lg font-semibold transition-all ${

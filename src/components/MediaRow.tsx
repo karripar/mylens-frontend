@@ -44,7 +44,7 @@ const MediaRow = (props: MediaRowProps) => {
             )
           }
         >
-          <p className="text-white font-semibold hover:text-blue-300">
+          <p className="text-white font-semibold break-all max-w-100 hover:text-blue-300">
             {user && user.user_id === item.user_id ? (
               <>
                 {item.username}{' '}
@@ -81,15 +81,15 @@ const MediaRow = (props: MediaRowProps) => {
 
       {/* Actions */}
       {user && (
-      <div className="flex items-center justify-items-start space-x-3 w-full px-2">
-        <Likes aria-label="like the post" item={item} />
-        <MessageCircle
-          aria-label="comment"
-          className="w-6 h-6 text-gray-400 cursor-pointer hover:opacity-85 "
-          onClick={() => navigate('/single', {state: {item}})}
-        />
-        <Saves aria-label="save the post" item={item} />
-      </div>
+        <div className="flex items-center justify-items-start space-x-3 w-full px-2">
+          <Likes aria-label="like the post" item={item} />
+          <MessageCircle
+            aria-label="comment"
+            className="w-6 h-6 text-gray-400 cursor-pointer hover:opacity-85 "
+            onClick={() => navigate('/single', {state: {item}})}
+          />
+          <Saves aria-label="save the post" item={item} />
+        </div>
       )}
 
       {/* Tags */}
@@ -111,7 +111,6 @@ const MediaRow = (props: MediaRowProps) => {
         <h4 className="font-semibold my-0.5 ">{item.title}</h4>
         <p>{item.description}</p>
       </div>
-
     </article>
   );
 };

@@ -1,7 +1,7 @@
-import { MediaItemWithOwner } from 'hybrid-types/DBTypes';
-import { useEffect, useReducer } from 'react';
-import { useSavedMedia } from '../hooks/apiHooks';
-import { Save } from 'lucide-react';
+import {MediaItemWithOwner} from 'hybrid-types/DBTypes';
+import {useEffect, useReducer} from 'react';
+import {useSavedMedia} from '../hooks/apiHooks';
+import {Save} from 'lucide-react';
 
 type SaveState = {
   count: number;
@@ -9,8 +9,8 @@ type SaveState = {
 };
 
 type SaveAction =
-  | { type: 'setSaveCount'; count: number }
-  | { type: 'toggleSave'; isSaved: boolean };
+  | {type: 'setSaveCount'; count: number}
+  | {type: 'toggleSave'; isSaved: boolean};
 
 const saveInitialState: SaveState = {
   count: 0,
@@ -20,17 +20,18 @@ const saveInitialState: SaveState = {
 const saveReducer = (state: SaveState, action: SaveAction): SaveState => {
   switch (action.type) {
     case 'setSaveCount':
-      return { ...state, count: action.count };
+      return {...state, count: action.count};
     case 'toggleSave':
-      return { ...state, isSaved: action.isSaved };
+      return {...state, isSaved: action.isSaved};
     default:
       return state;
   }
 };
 
-const Saves = ({ item }: { item: MediaItemWithOwner }) => {
+const Saves = ({item}: {item: MediaItemWithOwner}) => {
   const [saveState, saveDispatch] = useReducer(saveReducer, saveInitialState);
-  const { postSavedMedia, removeSavedMedia, getIfSaved, getSaveCountByMediaId } = useSavedMedia();
+  const {postSavedMedia, removeSavedMedia, getIfSaved, getSaveCountByMediaId} =
+    useSavedMedia();
 
   useEffect(() => {
     const fetchSaveData = async () => {
@@ -39,19 +40,17 @@ const Saves = ({ item }: { item: MediaItemWithOwner }) => {
 
       try {
         const isSaved = await getIfSaved(item.media_id, token);
-        saveDispatch({ type: 'toggleSave', isSaved });
+        saveDispatch({type: 'toggleSave', isSaved});
 
         const count = await getSaveCountByMediaId(item.media_id);
-        saveDispatch({ type: 'setSaveCount', count }); // Now count is a number!
+        saveDispatch({type: 'setSaveCount', count}); // Now count is a number!
       } catch (error) {
         console.error((error as Error).message);
       }
     };
 
-
     fetchSaveData();
   }, [item]);
-
 
   const handleSave = async () => {
     try {
@@ -60,12 +59,12 @@ const Saves = ({ item }: { item: MediaItemWithOwner }) => {
 
       if (saveState.isSaved) {
         await removeSavedMedia(item.media_id, token);
-        saveDispatch({ type: 'toggleSave', isSaved: false });
-        saveDispatch({ type: 'setSaveCount', count: saveState.count - 1 });
+        saveDispatch({type: 'toggleSave', isSaved: false});
+        saveDispatch({type: 'setSaveCount', count: saveState.count - 1});
       } else {
         await postSavedMedia(item.media_id, token);
-        saveDispatch({ type: 'toggleSave', isSaved: true });
-        saveDispatch({ type: 'setSaveCount', count: saveState.count + 1 });
+        saveDispatch({type: 'toggleSave', isSaved: true});
+        saveDispatch({type: 'setSaveCount', count: saveState.count + 1});
       }
     } catch (error) {
       console.error((error as Error).message);
@@ -75,7 +74,9 @@ const Saves = ({ item }: { item: MediaItemWithOwner }) => {
   return (
     <div className="flex items-center gap-2">
       <button onClick={handleSave}>
-        <Save className={`w-6 h-6 cursor-pointer ${saveState.isSaved ? 'text-blue-500' : 'text-gray-400'}`} />
+        <Save
+          className={`w-6 h-6 cursor-pointer ${saveState.isSaved ? 'text-blue-500' : 'text-gray-400'}`}
+        />
       </button>
       <p className="text-gray-100">{saveState.count}</p>
     </div>

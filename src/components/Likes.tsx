@@ -1,7 +1,7 @@
-import { Like, MediaItemWithOwner } from "hybrid-types/DBTypes";
-import { useEffect, useReducer } from "react";
-import { useLike } from "../hooks/apiHooks";
-import { Heart } from "lucide-react";
+import {Like, MediaItemWithOwner} from 'hybrid-types/DBTypes';
+import {useEffect, useReducer} from 'react';
+import {useLike} from '../hooks/apiHooks';
+import {Heart} from 'lucide-react';
 
 type LikeState = {
   count: number;
@@ -12,7 +12,7 @@ type LikeAction = {
   type: 'setLikeCount' | 'like';
   like?: Like | null;
   count?: number;
-}
+};
 
 const likeInitialState: LikeState = {
   count: 0,
@@ -29,7 +29,7 @@ const likeReducer = (state: LikeState, action: LikeAction): LikeState => {
     default:
       return state;
   }
-}
+};
 
 const Likes = ({item}: {item: MediaItemWithOwner}) => {
   const [likeState, likeDispatch] = useReducer(likeReducer, likeInitialState);
@@ -42,14 +42,14 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
     // Get the user's like for the item
     try {
       const userLike = await getUserLike(item.media_id, token);
-      likeDispatch({type: 'like', like: userLike})
+      likeDispatch({type: 'like', like: userLike});
     } catch (error) {
       likeDispatch({type: 'like', like: null});
       if (import.meta.env.VITE_NODE_ENV === 'development2') {
         console.error((error as Error).message);
       }
     }
-  }
+  };
 
   const getLikeCount = async () => {
     try {
@@ -61,7 +61,7 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
         console.error((error as Error).message);
       }
     }
-  }
+  };
 
   useEffect(() => {
     getLikes();
@@ -83,25 +83,25 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
         console.log('newLike', newLike);
         getLikes();
         getLikeCount();
+      }
+    } catch (error) {
+      console.error((error as Error).message);
     }
-  } catch (error) {
-    console.error((error as Error).message);
-  }
-};
+  };
 
-// Return the JSX for the component
-return (
-  <>
-  <p className="text-gray-100">{likeState.count}</p>
-  <button onClick={handleLike}>
-    <Heart
-      className={`w-6 h-6 text-gray-400 bg-none cursor-pointer ${
-        likeState.userLike ? 'text-red-500' : ''
-      }`}
-    />
-  </button>
-  </>
-)
-}
+  // Return the JSX for the component
+  return (
+    <>
+      <p className="text-gray-100">{likeState.count}</p>
+      <button onClick={handleLike}>
+        <Heart
+          className={`w-6 h-6 text-gray-400 bg-none cursor-pointer ${
+            likeState.userLike ? 'text-red-500' : ''
+          }`}
+        />
+      </button>
+    </>
+  );
+};
 
 export default Likes;

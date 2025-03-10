@@ -89,14 +89,17 @@ const VisitProfile = () => {
               {/* Profile Picture */}
               <div className="relative">
                 <img
-                  src={profilePicture?.filename || 'https://robohash.org/' + visitedUser.username}
+                  src={
+                    profilePicture?.filename ||
+                    'https://robohash.org/' + visitedUser.username
+                  }
                   alt={visitedUser.username}
                   className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover"
                 />
               </div>
 
               {/* Username */}
-              <h2 className="text-3xl font-bold text-gray-800">
+              <h2 className="text-3xl font-bold break-all text-gray-800">
                 {visitedUser.username}
               </h2>
 

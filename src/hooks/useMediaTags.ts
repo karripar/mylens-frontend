@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useTags } from './apiHooks';
+import {useEffect, useState} from 'react';
+import {useTags} from './apiHooks';
 
 export const useMediaTags = (mediaId: number) => {
-  const { getTagsByMediaId } = useTags();
+  const {getTagsByMediaId} = useTags();
   const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {

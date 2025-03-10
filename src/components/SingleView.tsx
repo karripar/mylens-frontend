@@ -1,10 +1,10 @@
-import { MediaItemWithProfilePicture } from "hybrid-types/DBTypes";
+import {MediaItemWithProfilePicture} from 'hybrid-types/DBTypes';
 
 const SingleView = (props: {
   item: MediaItemWithProfilePicture | undefined;
   setSelectedItem: (item: MediaItemWithProfilePicture | undefined) => void;
 }) => {
-  const { item, setSelectedItem } = props;
+  const {item, setSelectedItem} = props;
 
   return (
     <>
@@ -12,7 +12,9 @@ const SingleView = (props: {
         <div className="flex flex-col items-center justify-center w-full bg-stone-900 p-6 rounded-2xl shadow-xl max-w-3xl mx-auto">
           {/* User and Title */}
           <div className="text-center mb-6">
-            <p className="text-lg font-semibold text-amber-400">{item.username}</p>
+            <p className="text-lg text-wrap font-semibold text-amber-400">
+              {item.username}
+            </p>
             <p className="text-xl font-bold text-white mt-2">{item.title}</p>
           </div>
 
@@ -34,7 +36,9 @@ const SingleView = (props: {
           </div>
 
           {/* Description */}
-          <p className="text-white text-sm md:text-base mb-6 text-center max-w-prose">{item.description}</p>
+          <p className="text-white text-sm md:text-base mb-6 text-center max-w-prose">
+            {item.description}
+          </p>
 
           {/* Close Button */}
           <div className="flex justify-center w-full">
@@ -48,7 +52,7 @@ const SingleView = (props: {
         </div>
       )}
     </>
-  )
+  );
 };
 
 export default SingleView;

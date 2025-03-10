@@ -143,7 +143,6 @@ const Profile = () => {
       setIsEditing(false);
       setIsEditingUsername(false);
       setIsEditingBio(false);
-
     } catch (error) {
       console.error((error as Error).message);
     }
@@ -208,7 +207,9 @@ const Profile = () => {
           </div>
 
           {/* Username */}
-          <h2 className="text-3xl font-bold text-gray-800">{user?.username}</h2>
+          <h2 className="text-3xl font-bold break-all text-gray-800">
+            {user?.username}
+          </h2>
 
           {/* User Role */}
           <p className="text-gray-600 text-lg">{user?.level_name}</p>

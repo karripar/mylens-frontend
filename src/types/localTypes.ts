@@ -1,8 +1,14 @@
-import { UserWithProfilePicture, UserWithUnhashedPassword} from "hybrid-types/DBTypes";
+import {
+  UserWithProfilePicture,
+  UserWithUnhashedPassword,
+} from 'hybrid-types/DBTypes';
 
-type Credentials = Pick<UserWithUnhashedPassword, "email" | "password">;
+type Credentials = Pick<UserWithUnhashedPassword, 'email' | 'password'>;
 
-type RegisterCredentials = Pick<UserWithUnhashedPassword, "email" | "password" | "username">;
+type RegisterCredentials = Pick<
+  UserWithUnhashedPassword,
+  'email' | 'password' | 'username'
+>;
 
 type AuthContextType = {
   user: UserWithProfilePicture | null;
@@ -12,4 +18,3 @@ type AuthContextType = {
 };
 
 export type {Credentials, RegisterCredentials, AuthContextType};
-

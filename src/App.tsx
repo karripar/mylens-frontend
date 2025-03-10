@@ -18,29 +18,31 @@ import Saved from './views/Saved';
 const ProfilePage = () => {
   const {user} = useUserContext();
 
-  return user ? <Profile/> : <Login/>;
+  return user ? <Profile /> : <Login />;
 };
 
 const App = () => {
-
   return (
     <>
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <UserProvider>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Home />}></Route>
-            <Route path="/user" element={<ProfilePage />}></Route>
-            <Route path="/profile/:username" element={<VisitProfile />}></Route>
-            <Route path="/post" element={<Upload />}></Route>
-            <Route path="/single" element={<Single/>}></Route>
-            <Route path="/search" element={<Search/>}></Route>
-            <Route path="/logout" element={<Logout/>}></Route>
-            <Route path="/tag/:tag" element={<TagMedia/>}></Route>
-            <Route path="/saved" element={<Saved/>}></Route>
-            <Route path="*" element={<NotFound/>}></Route>
-          </Route>
-        </Routes>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Home />}></Route>
+              <Route path="/user" element={<ProfilePage />}></Route>
+              <Route
+                path="/profile/:username"
+                element={<VisitProfile />}
+              ></Route>
+              <Route path="/post" element={<Upload />}></Route>
+              <Route path="/single" element={<Single />}></Route>
+              <Route path="/search" element={<Search />}></Route>
+              <Route path="/logout" element={<Logout />}></Route>
+              <Route path="/tag/:tag" element={<TagMedia />}></Route>
+              <Route path="/saved" element={<Saved />}></Route>
+              <Route path="*" element={<NotFound />}></Route>
+            </Route>
+          </Routes>
         </UserProvider>
       </BrowserRouter>
     </>

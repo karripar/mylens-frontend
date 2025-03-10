@@ -1,7 +1,6 @@
-import { useState } from "react";
-import LoginForm from "../components/LoginForm";
-import RegisterForm from "../components/RegisterForm";
-
+import {useState} from 'react';
+import LoginForm from '../components/LoginForm';
+import RegisterForm from '../components/RegisterForm';
 
 const Login = () => {
   const [displayRegister, setDisplayRegister] = useState(false);
@@ -9,7 +8,6 @@ const Login = () => {
   const toggleRegister = () => {
     setDisplayRegister(!displayRegister);
   };
-
 
   return (
     <div>
@@ -20,6 +18,6 @@ const Login = () => {
       )}
     </div>
   );
-}
+};
 
 export default Login;

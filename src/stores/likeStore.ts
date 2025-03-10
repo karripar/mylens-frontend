@@ -1,5 +1,5 @@
-import { Comment } from "hybrid-types/DBTypes";
-import { create } from "zustand";
+import {Comment} from 'hybrid-types/DBTypes';
+import {create} from 'zustand';
 
 // Define the store type for comments
 type CommentStore = {
@@ -11,13 +11,13 @@ type CommentStore = {
 
 export const useCommentStore = create<CommentStore>((set) => ({
   comments: [],
-  setComments: (comments) => set({ comments }),
+  setComments: (comments) => set({comments}),
   addComment: (comment) =>
     set((state) => ({
       comments: [
         ...state.comments,
         {
-          comment_id: comment.comment_id, 
+          comment_id: comment.comment_id,
           comment_text: comment.comment_text,
           user_id: comment.user_id,
           media_id: comment.media_id,
@@ -29,7 +29,8 @@ export const useCommentStore = create<CommentStore>((set) => ({
     })),
   deleteComment: (comment_id) =>
     set((state) => ({
-      comments: state.comments.filter((comment) => comment.comment_id !== comment_id),
+      comments: state.comments.filter(
+        (comment) => comment.comment_id !== comment_id,
+      ),
     })),
 }));
-

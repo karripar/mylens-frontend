@@ -116,25 +116,6 @@ const TagMedia = () => {
                 <h4 className="font-semibold my-0.5">{item.title}</h4>
                 <p>{item.description}</p>
               </div>
-
-              {/* Admin Actions */}
-              {(user?.user_id === item.user_id ||
-                user?.level_name === 'Admin') && (
-                <div className="flex gap-2 pt-2">
-                  <button
-                    onClick={() => console.log('Modify clicked', item.media_id)}
-                    className="flex-1 bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition-all duration-300"
-                  >
-                    Modify
-                  </button>
-                  <button
-                    onClick={() => console.log('Delete clicked', item.media_id)}
-                    className="flex-1 bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 transition-all duration-300"
-                  >
-                    Delete
-                  </button>
-                </div>
-              )}
             </article>
           ))}
         </div>

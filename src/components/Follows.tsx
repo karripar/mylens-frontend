@@ -1,6 +1,6 @@
-import { Follow } from "hybrid-types/DBTypes";
-import { useEffect, useReducer } from "react";
-import { useFollow } from "../hooks/apiHooks";
+import {Follow} from 'hybrid-types/DBTypes';
+import {useEffect, useReducer} from 'react';
+import {useFollow} from '../hooks/apiHooks';
 
 type FollowState = {
   count: number;
@@ -8,7 +8,7 @@ type FollowState = {
 };
 
 type FollowAction = {
-  type: "setFollowCount" | "follow";
+  type: 'setFollowCount' | 'follow';
   follow?: Follow | null;
   count?: number;
 };
@@ -18,31 +18,42 @@ const followInitialState: FollowState = {
   userFollow: null,
 };
 
-const followReducer = (state: FollowState, action: FollowAction): FollowState => {
+const followReducer = (
+  state: FollowState,
+  action: FollowAction,
+): FollowState => {
   switch (action.type) {
-    case "setFollowCount":
-      return { ...state, count: action.count ?? 0 };
-    case "follow":
-      return { ...state, userFollow: action.follow ?? null };
+    case 'setFollowCount':
+      return {...state, count: action.count ?? 0};
+    case 'follow':
+      return {...state, userFollow: action.follow ?? null};
     default:
       return state;
   }
 };
 
-const Follows = ({ userId }: { userId: number }) => {
-  const [followState, followDispatch] = useReducer(followReducer, followInitialState);
-  const { getFollowedUsers, postFollow, removeFollow } = useFollow();
+const Follows = ({userId}: {userId: number}) => {
+  const [followState, followDispatch] = useReducer(
+    followReducer,
+    followInitialState,
+  );
+  const {getFollowedUsers, postFollow, removeFollow} = useFollow();
 
   const fetchFollowData = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token || !userId) return;
 
     try {
       const userFollows = await getFollowedUsers(token);
-      const userFollow = userFollows.length > 0 ? userFollows[0] : null;
-      followDispatch({ type: "follow", follow: userFollow });
+
+      // Check if the currently viewed userId is in the followed list
+      const userFollow =
+        userFollows.find((follow: Follow) => follow.followed_id === userId) ||
+        null;
+
+      followDispatch({type: 'follow', follow: userFollow});
     } catch (error) {
-      followDispatch({ type: "follow", follow: null });
+      followDispatch({type: 'follow', follow: null});
       console.error((error as Error).message);
     }
   };
@@ -54,15 +65,15 @@ const Follows = ({ userId }: { userId: number }) => {
 
   const handleFollow = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (!token || !userId) return;
 
       if (followState.userFollow) {
         // Remove follow
         await removeFollow(followState.userFollow.follow_id, token);
 
-        followDispatch({ type: "follow", follow: null });
-        followDispatch({ type: "setFollowCount", count: followState.count - 1 });
+        followDispatch({type: 'follow', follow: null});
+        followDispatch({type: 'setFollowCount', count: followState.count - 1});
       } else {
         // Add follow
         const response = await postFollow(userId, token);
@@ -70,9 +81,9 @@ const Follows = ({ userId }: { userId: number }) => {
           follow_id: response.follow_id,
           follower_id: response.follower_id,
           followed_id: response.followed_id,
-        }
-        followDispatch({ type: "follow", follow: newFollow });
-        followDispatch({ type: "setFollowCount", count: followState.count + 1 });
+        };
+        followDispatch({type: 'follow', follow: newFollow});
+        followDispatch({type: 'setFollowCount', count: followState.count + 1});
       }
     } catch (error) {
       console.error((error as Error).message);
@@ -86,10 +97,12 @@ const Follows = ({ userId }: { userId: number }) => {
       <button
         onClick={handleFollow}
         className={`py-1 px-4 rounded-lg transition duration-200 ${
-          followState.userFollow ? "bg-gray-500 text-white hover:bg-gray-700" : "bg-blue-500 text-white hover:bg-blue-600"
+          followState.userFollow
+            ? 'bg-gray-500 text-white hover:bg-gray-700'
+            : 'bg-blue-500 text-white hover:bg-blue-600'
         }`}
       >
-        {followState.userFollow ? "Unfollow" : "Follow"}
+        {followState.userFollow ? 'Unfollow' : 'Follow'}
       </button>
     </div>
   );

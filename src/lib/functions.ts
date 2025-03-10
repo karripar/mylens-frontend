@@ -29,6 +29,6 @@ const formatFileSize = (size: number) => {
 
 const formatDate = (date: string, lang: string) => {
   return new Date(date).toLocaleString(lang);
-}
+};
 
 export {fetchData, formatFileSize, formatDate};

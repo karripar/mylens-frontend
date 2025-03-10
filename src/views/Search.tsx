@@ -11,7 +11,7 @@ import Follows from '../components/Follows';
 import Likes from '../components/Likes';
 import {MessageCircle} from 'lucide-react';
 import {useNavigate} from 'react-router-dom';
-import { useProfilePicture } from '../hooks/apiHooks';
+import {useProfilePicture} from '../hooks/apiHooks';
 
 const searchOptions = [
   {value: 'title', label: 'Media by Title'},
@@ -23,14 +23,20 @@ const searchOptions = [
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchCategory, setSearchCategory] = useState('title');
-  const [mediaSearchResults, setMediaSearchResults] = useState<MediaItemWithOwner[]>([]);
-  const [userSearchResults, setUserSearchResults] = useState<UserWithNoSensitiveInfo[]>([]);
+  const [mediaSearchResults, setMediaSearchResults] = useState<
+    MediaItemWithOwner[]
+  >([]);
+  const [userSearchResults, setUserSearchResults] = useState<
+    UserWithNoSensitiveInfo[]
+  >([]);
   const [hasSearched, setHasSearched] = useState(false); // Track whether a search has been performed
-  const { user } = useUserContext();
+  const {user} = useUserContext();
   const navigate = useNavigate();
   const {getProfilePicture} = useProfilePicture();
   const [profilePicture, setProfilePicture] = useState<ProfilePicture>();
-  const [profilePictures, setProfilePictures] = useState<Record<number, string>>({});
+  const [profilePictures, setProfilePictures] = useState<
+    Record<number, string>
+  >({});
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -48,21 +54,23 @@ const Search = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, searchCategory]);
 
-  useEffect(() => {
-    const fetchProfilePicture = async () => {
-      if (!user) return;
+  useEffect(
+    () => {
+      const fetchProfilePicture = async () => {
+        if (!user) return;
 
-      try {
-        const response = await getProfilePicture(user.user_id);
-        setProfilePicture(response);
-      } catch (error) {
-        console.error((error as Error).message);
-      }
-    }
-    fetchProfilePicture();
-  }
+        try {
+          const response = await getProfilePicture(user.user_id);
+          setProfilePicture(response);
+        } catch (error) {
+          console.error((error as Error).message);
+        }
+      };
+      fetchProfilePicture();
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  , [user]);
+    [user],
+  );
 
   const handleSearch = async () => {
     const options = {
@@ -75,7 +83,10 @@ const Search = () => {
     try {
       if (searchCategory === 'user') {
         const query = `${import.meta.env.VITE_AUTH_API}/users/search/byusername?username=${encodeURIComponent(searchQuery)}`;
-        const response = await fetchData<UserWithNoSensitiveInfo[]>(query, options);
+        const response = await fetchData<UserWithNoSensitiveInfo[]>(
+          query,
+          options,
+        );
         setUserSearchResults(response);
         setMediaSearchResults([]);
 
@@ -83,17 +94,21 @@ const Search = () => {
         const picturePromises = response.map(async (userItem) => {
           try {
             const picResponse = await getProfilePicture(userItem.user_id);
-            return { userId: userItem.user_id, filename: picResponse?.filename };
+            return {userId: userItem.user_id, filename: picResponse?.filename};
           } catch {
-            return { userId: userItem.user_id, filename: '' }; // Handle missing pictures
+            return {userId: userItem.user_id, filename: ''}; // Handle missing pictures
           }
         });
 
         const pictures = await Promise.all(picturePromises);
-        const profilePicMap = pictures.reduce((acc, pic) => {
-          acc[pic.userId] = pic.filename || `https://robohash.org/${pic.userId}`;
-          return acc;
-        }, {} as Record<number, string>);
+        const profilePicMap = pictures.reduce(
+          (acc, pic) => {
+            acc[pic.userId] =
+              pic.filename || `https://robohash.org/${pic.userId}`;
+            return acc;
+          },
+          {} as Record<number, string>,
+        );
 
         setProfilePictures(profilePicMap);
       } else {
@@ -104,10 +119,10 @@ const Search = () => {
           response.map(async (item) => {
             const owner = await fetchData<UserWithNoSensitiveInfo>(
               `${import.meta.env.VITE_AUTH_API}/users/${item.user_id}`,
-              options
+              options,
             );
-            return { ...item, username: owner.username };
-          })
+            return {...item, username: owner.username};
+          }),
         );
 
         setMediaSearchResults(mediaWithOwner);
@@ -119,7 +134,6 @@ const Search = () => {
       console.error(error);
     }
   };
-
 
   return (
     <>
@@ -157,13 +171,15 @@ const Search = () => {
       </form>
 
       {/* Display User Search Results */}
-      {hasSearched && userSearchResults.length === 0 && searchCategory === 'user' && (
-        <div className="w-full max-w-lg mx-auto text-center my-4">
-          <p className="text-gray-400 text-sm">No users found.</p>
-        </div>
-      )}
+      {hasSearched &&
+        userSearchResults.length === 0 &&
+        searchCategory === 'user' && (
+          <div className="w-full max-w-lg mx-auto text-center my-4">
+            <p className="text-gray-400 text-sm">No users found.</p>
+          </div>
+        )}
       {userSearchResults.length > 0 && (
-        <div className="w-full max-w-lg mx-auto">
+        <div className="w-full max-w-lg mb-20 mx-auto">
           <h2 className="text-lg font-semibold text-white mt-4">
             User Results
           </h2>
@@ -181,7 +197,10 @@ const Search = () => {
             >
               {/* Avatar */}
               <img
-                src={profilePictures[userItem.user_id] || `https://robohash.org/${userItem.username}`}
+                src={
+                  profilePictures[userItem.user_id] ||
+                  `https://robohash.org/${userItem.username}`
+                }
                 alt={userItem.username}
                 className="w-10 h-10 min-w-10 rounded-full flex-shrink-0"
               />
@@ -208,13 +227,15 @@ const Search = () => {
       )}
 
       {/* Display Media Search Results */}
-      {hasSearched && mediaSearchResults.length === 0 && searchCategory !== 'user' && (
-        <div className="w-full max-w-lg mx-auto text-center my-4">
-          <p className="text-gray-400 text-sm">No media found.</p>
-        </div>
-      )}
+      {hasSearched &&
+        mediaSearchResults.length === 0 &&
+        searchCategory !== 'user' && (
+          <div className="w-full max-w-lg mx-auto text-center my-4">
+            <p className="text-gray-400 text-sm">No media found.</p>
+          </div>
+        )}
       {mediaSearchResults.length > 0 && (
-        <div>
+        <div className="w-full max-w-lg mx-auto mb-20">
           <h2 className="text-lg font-semibold text-white mt-4">
             Media Results
           </h2>
@@ -225,12 +246,17 @@ const Search = () => {
             >
               {/* User Info */}
               <div className="flex items-center space-x-3 w-full">
-                <img className="w-10 h-10 bg-gray-700 rounded-full"
-                  src={profilePictures[item.user_id] || profilePicture?.filename || `https://robohash.org/${item.user_id}`}
+                <img
+                  className="w-10 h-10 bg-gray-700 rounded-full"
+                  src={
+                    profilePictures[item.user_id] ||
+                    profilePicture?.filename ||
+                    `https://robohash.org/${item.user_id}`
+                  }
                   alt={item.username}
                 />
                 <div className="text-left">
-                  <p className="text-white font-semibold">
+                  <p className="text-white font-semibold break-all">
                     {user && user.user_id === item.user_id ? (
                       <>
                         {item.username}{' '}

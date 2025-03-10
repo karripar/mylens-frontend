@@ -1,21 +1,34 @@
-import { MediaItemWithOwner } from 'hybrid-types/DBTypes';
-import { NavigateFunction, useLocation, useNavigate } from 'react-router-dom';
+import {MediaItemWithOwner} from 'hybrid-types/DBTypes';
+import {NavigateFunction, useLocation, useNavigate} from 'react-router-dom';
 import Comments from '../components/Comments';
 import Likes from '../components/Likes';
-import { ArrowLeft } from 'lucide-react';
+import {ArrowLeft} from 'lucide-react';
 import useUserContext from '../hooks/contextHooks';
-import { useMediaTags } from '../hooks/useMediaTags';
+import {useMediaTags} from '../hooks/useMediaTags';
 import Saves from '../components/Saves';
-import { useMedia } from '../hooks/apiHooks';
-import { useState } from 'react';
+import {useMedia} from '../hooks/apiHooks';
+import {useState} from 'react';
+import EditMediaModal from '../components/EditModal';
 
 const Single = () => {
-  const { state } = useLocation();
+  const {state} = useLocation();
   const item: MediaItemWithOwner = state?.item;
   const navigate: NavigateFunction = useNavigate();
-  const { user } = useUserContext();
+  const {user} = useUserContext();
   const tags = useMediaTags(item.media_id);
-  const { deleteMedia } = useMedia();
+  const {deleteMedia} = useMedia();
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [mediaData, setMediaData] = useState({
+    title: item.title,
+    description: item.description,
+  });
+
+  const handleSaveEdit = (updatedItem: {
+    title: string;
+    description: string;
+  }) => {
+    setMediaData(updatedItem);
+  };
 
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState('');
@@ -33,7 +46,7 @@ const Single = () => {
       console.log(deleteResponse);
 
       setDeleteMessage('Item deleted successfully!');
-      setTimeout(() => navigate('/'), 2000);  // Redirect after 2 seconds
+      setTimeout(() => navigate('/'), 2000); // Redirect after 2 seconds
     } catch (error) {
       console.error(error);
       setDeleteMessage('Error deleting item. Please try again.');
@@ -100,7 +113,7 @@ const Single = () => {
         {/* User Info & Actions */}
         <div className="mt-6 p-4 bg-gray-700 rounded-lg shadow-md text-center text-white">
           <p
-            className="text-lg font-semibold mt-2 hover:text-blue-400 cursor-default"
+            className="text-lg font-semibold mt-2 hover:text-blue-400 break-all cursor-default"
             onClick={() =>
               navigate(
                 user?.username === item.username
@@ -131,16 +144,35 @@ const Single = () => {
 
           {/* Delete Button */}
           {user && user.user_id === item.user_id && (
-            <div className="mt-6 p-4 bg-gray-700 flex justify-center rounded-lg">
+            <div className="mt-6 p-4 bg-gray-700 flex gap-10 justify-center rounded-lg">
               <button
                 onClick={() => setShowConfirmDelete(true)}
                 className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
               >
                 Delete
               </button>
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              >
+                Edit
+              </button>
             </div>
           )}
         </div>
+
+        {/* Edit Modal */}
+        {showEditModal && (
+          <EditMediaModal
+            item={{
+              ...item,
+              title: mediaData.title,
+              description: mediaData.description,
+            }}
+            onClose={() => setShowEditModal(false)}
+            onSave={handleSaveEdit}
+          />
+        )}
 
         {/* Comments Section */}
         <div className="mt-6 p-4 bg-gray-700 rounded-lg shadow-md">
@@ -154,7 +186,9 @@ const Single = () => {
           <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center text-white">
             {!deleteMessage ? (
               <>
-                <p className="text-lg mb-4">Are you sure you want to delete this item?</p>
+                <p className="text-lg mb-4">
+                  Are you sure you want to delete this item?
+                </p>
                 <div className="flex justify-center gap-4">
                   <button
                     onClick={handleDelete}

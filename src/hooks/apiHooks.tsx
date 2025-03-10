@@ -1,9 +1,12 @@
-import {Comment, Follow, MediaItemWithProfilePicture, MediaResponse, ProfilePicture, Tag} from 'hybrid-types/DBTypes';
 import {
-  Like,
-  MediaItem,
-  UserWithNoPassword,
+  Comment,
+  Follow,
+  MediaItemWithProfilePicture,
+  MediaResponse,
+  ProfilePicture,
+  Tag,
 } from 'hybrid-types/DBTypes';
+import {Like, MediaItem, UserWithNoPassword} from 'hybrid-types/DBTypes';
 import {useEffect, useState} from 'react';
 import {fetchData} from '../lib/functions';
 import {Credentials, RegisterCredentials} from '../types/localTypes';
@@ -16,7 +19,9 @@ import {
 } from 'hybrid-types/MessageTypes';
 
 const useMedia = (token?: string, username?: string) => {
-  const [mediaArray, setMediaArray] = useState<MediaItemWithProfilePicture[]>([]);
+  const [mediaArray, setMediaArray] = useState<MediaItemWithProfilePicture[]>(
+    [],
+  );
 
   useEffect(() => {
     const getMedia = async () => {
@@ -48,14 +53,18 @@ const useMedia = (token?: string, username?: string) => {
             );
 
             const profilePicture = await fetchData<ProfilePicture>(
-              import.meta.env.VITE_AUTH_API + '/users/profile/picture/' + item.user_id,
+              import.meta.env.VITE_AUTH_API +
+                '/users/profile/picture/' +
+                item.user_id,
               options,
             );
 
             const mediaItem: MediaItemWithProfilePicture = {
               ...item,
               username: owner.username,
-              profile_picture: profilePicture?.filename || 'https://robohash.org/' + owner.username,
+              profile_picture:
+                profilePicture?.filename ||
+                'https://robohash.org/' + owner.username,
             };
             return mediaItem;
           }),
@@ -108,6 +117,40 @@ const useMedia = (token?: string, username?: string) => {
     );
   };
 
+  const modifyMedia = async (
+    media_id: number,
+    inputs: Record<string, string>,
+    token: string,
+  ) => {
+    const media: Omit<
+      MediaItem,
+      | 'media_id'
+      | 'user_id'
+      | 'thumbnail'
+      | 'created_at'
+      | 'screenshots'
+      | 'filename'
+      | 'media_type'
+      | 'filesize'
+    > = {
+      title: inputs.title,
+      description: inputs.description,
+    };
+
+    const options = {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(media),
+    };
+    return await fetchData<MediaResponse>(
+      import.meta.env.VITE_MEDIA_API + '/media/byid/' + media_id,
+      options,
+    );
+  };
+
   const getMediaByTagName = async (tag: string) => {
     try {
       const response = await fetchData<MediaItem[]>(
@@ -120,13 +163,17 @@ const useMedia = (token?: string, username?: string) => {
           );
 
           const profilePicture = await fetchData<ProfilePicture>(
-            import.meta.env.VITE_AUTH_API + '/users/profile/picture/' + item.user_id,
+            import.meta.env.VITE_AUTH_API +
+              '/users/profile/picture/' +
+              item.user_id,
           );
 
           const mediaItem: MediaItemWithProfilePicture = {
             ...item,
             username: owner.username,
-            profile_picture: profilePicture?.filename || 'https://robohash.org/' + owner.username,
+            profile_picture:
+              profilePicture?.filename ||
+              'https://robohash.org/' + owner.username,
           };
           return mediaItem;
         }),
@@ -154,7 +201,7 @@ const useMedia = (token?: string, username?: string) => {
     }
   };
 
-  return {mediaArray, postMedia, getMediaByTagName, deleteMedia};
+  return {mediaArray, postMedia, getMediaByTagName, deleteMedia, modifyMedia};
 };
 
 const useFile = () => {
@@ -588,7 +635,6 @@ const useFollow = () => {
     }
   };
 
-
   return {
     followArray,
     postFollow,
@@ -605,12 +651,12 @@ const useProfilePicture = () => {
         filename: file.data.filename,
         media_type: file.data.media_type,
         filesize: file.data.filesize,
-      }
+      };
 
       const options = {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer ' + token,
+          Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(media),
@@ -625,13 +671,17 @@ const useProfilePicture = () => {
     }
   };
 
-  const putProfilePicture = async (file: UploadResponse, token: string, user_id: number) => {
+  const putProfilePicture = async (
+    file: UploadResponse,
+    token: string,
+    user_id: number,
+  ) => {
     try {
       const media = {
         filename: file.data.filename,
         media_type: file.data.media_type,
         filesize: file.data.filesize,
-      }
+      };
 
       if (!user_id || !token) {
         throw new Error('User id or token missing');
@@ -640,7 +690,7 @@ const useProfilePicture = () => {
       const options = {
         method: 'PUT',
         headers: {
-          'Authorization': 'Bearer ' + token,
+          Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(media),
@@ -684,55 +734,65 @@ const useProfilePicture = () => {
     }
   };
 
-  return {postProfilePicture, getProfilePicture, deleteProfilePicture, putProfilePicture};
+  return {
+    postProfilePicture,
+    getProfilePicture,
+    deleteProfilePicture,
+    putProfilePicture,
+  };
 };
 
 const useSavedMedia = () => {
-  const [savedMediaArray, setSavedMediaArray] = useState<MediaItemWithProfilePicture[]>([]);
+  const [savedMediaArray, setSavedMediaArray] = useState<
+    MediaItemWithProfilePicture[]
+  >([]);
 
   useEffect(() => {
-  const getSavedMediaByUserId = async (token: string) => {
-    try {
-      const options = {
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      };
-      const response = await fetchData<MediaItem[]>(
-        import.meta.env.VITE_MEDIA_API + '/favorites/byuser',
-        options,
-      );
+    const getSavedMediaByUserId = async (token: string) => {
+      try {
+        const options = {
+          headers: {
+            Authorization: 'Bearer ' + token,
+          },
+        };
+        const response = await fetchData<MediaItem[]>(
+          import.meta.env.VITE_MEDIA_API + '/favorites/byuser',
+          options,
+        );
 
-      const mediaWithOwner: MediaItemWithProfilePicture[] = await Promise.all(
-        response.map(async (item) => {
-          const owner = await fetchData<UserWithNoPassword>(
-            import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
-            options,
-          );
+        const mediaWithOwner: MediaItemWithProfilePicture[] = await Promise.all(
+          response.map(async (item) => {
+            const owner = await fetchData<UserWithNoPassword>(
+              import.meta.env.VITE_AUTH_API + '/users/' + item.user_id,
+              options,
+            );
 
-          const profilePicture = await fetchData<ProfilePicture>(
-            import.meta.env.VITE_AUTH_API + '/users/profile/picture/' + item.user_id,
-            options,
-          );
+            const profilePicture = await fetchData<ProfilePicture>(
+              import.meta.env.VITE_AUTH_API +
+                '/users/profile/picture/' +
+                item.user_id,
+              options,
+            );
 
-          const mediaItem: MediaItemWithProfilePicture = {
-            ...item,
-            username: owner.username,
-            profile_picture: profilePicture?.filename || 'https://robohash.org/' + owner.username,
-          };
-          return mediaItem;
-        }),
-      );
-      setSavedMediaArray(mediaWithOwner);
-      return mediaWithOwner;
-    } catch (error) {
-      throw new Error((error as Error).message);
-    }
-  }
+            const mediaItem: MediaItemWithProfilePicture = {
+              ...item,
+              username: owner.username,
+              profile_picture:
+                profilePicture?.filename ||
+                'https://robohash.org/' + owner.username,
+            };
+            return mediaItem;
+          }),
+        );
+        setSavedMediaArray(mediaWithOwner);
+        return mediaWithOwner;
+      } catch (error) {
+        throw new Error((error as Error).message);
+      }
+    };
 
-  getSavedMediaByUserId(localStorage.getItem('token') || '');
+    getSavedMediaByUserId(localStorage.getItem('token') || '');
   }, []);
-
 
   const postSavedMedia = async (media_id: number, token: string) => {
     try {
@@ -777,40 +837,45 @@ const useSavedMedia = () => {
           Authorization: 'Bearer ' + token,
         },
       };
-      const response = await fetchData<{ favorite: boolean }>(
+      const response = await fetchData<{favorite: boolean}>(
         import.meta.env.VITE_MEDIA_API + '/favorites/byuser/' + media_id,
-        options
+        options,
       );
 
       return response.favorite ?? false; // Ensure it returns a boolean
     } catch (error) {
-      console.error(`Error checking if media ${media_id} is saved:`, (error as Error).message);
+      console.error(
+        `Error checking if media ${media_id} is saved:`,
+        (error as Error).message,
+      );
       return false; // Default to false on error
     }
   };
 
-
-
   const getSaveCountByMediaId = async (media_id: number) => {
     try {
-      const response = await fetchData<{ count: number }>(
-        import.meta.env.VITE_MEDIA_API + '/favorites/bymedia/' + media_id
+      const response = await fetchData<{count: number}>(
+        import.meta.env.VITE_MEDIA_API + '/favorites/bymedia/' + media_id,
       );
 
       return response.count ?? 0; // Ensure it returns a number
     } catch (error) {
-      console.error(`Error fetching save count for media ${media_id}:`, (error as Error).message);
+      console.error(
+        `Error fetching save count for media ${media_id}:`,
+        (error as Error).message,
+      );
       return 0; // Default to 0 on error
     }
   };
 
-
-
-
-  return {savedMediaArray, postSavedMedia, removeSavedMedia, getIfSaved, getSaveCountByMediaId};
-}
-
-
+  return {
+    savedMediaArray,
+    postSavedMedia,
+    removeSavedMedia,
+    getIfSaved,
+    getSaveCountByMediaId,
+  };
+};
 
 export {
   useMedia,

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useAuthentication, useUser } from '../hooks/apiHooks';
-import { UserWithProfilePicture } from 'hybrid-types/DBTypes';
-import { Credentials } from '../types/localTypes';
-import { useNavigate, useLocation } from 'react-router-dom';
-import UserContext from './UserContext';  // Import the context
+import React, {useEffect, useState} from 'react';
+import {useAuthentication, useUser} from '../hooks/apiHooks';
+import {UserWithProfilePicture} from 'hybrid-types/DBTypes';
+import {Credentials} from '../types/localTypes';
+import {useNavigate, useLocation} from 'react-router-dom';
+import UserContext from './UserContext'; // Import the context
 
-const UserProvider = ({ children }: { children: React.ReactNode }) => {
+const UserProvider = ({children}: {children: React.ReactNode}) => {
   const [user, setUser] = useState<UserWithProfilePicture | null>(null);
-  const { postLogin } = useAuthentication();
-  const { getUser } = useUser();
+  const {postLogin} = useAuthentication();
+  const {getUser} = useUser();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -70,7 +70,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, handleLogin, handleLogout, handleAutoLogin }}
+      value={{user, handleLogin, handleLogout, handleAutoLogin}}
     >
       {children}
     </UserContext.Provider>

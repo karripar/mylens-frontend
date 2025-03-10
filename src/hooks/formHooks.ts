@@ -1,8 +1,8 @@
-import { useState } from "react";
+import {useState} from 'react';
 
 const useForm = (
   callback: (event?: React.SyntheticEvent) => Promise<void> | void, // Callback can now return a promise
-  initState: Record<string, string>
+  initState: Record<string, string>,
 ) => {
   const [inputs, setInputs] = useState(initState);
 
@@ -15,10 +15,14 @@ const useForm = (
   };
 
   // Handle input changes and update the state, using the input name as the key
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setInputs((inputs) => ({ ...inputs, [event.target.name]: event.target.value }));
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setInputs((inputs) => ({
+      ...inputs,
+      [event.target.name]: event.target.value,
+    }));
   };
-
 
   return {
     handleSubmit,
@@ -28,4 +32,4 @@ const useForm = (
   };
 };
 
-export { useForm };
+export {useForm};

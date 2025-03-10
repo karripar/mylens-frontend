@@ -1,7 +1,6 @@
 import {Link, Outlet} from 'react-router-dom';
 import {House, Search, Plus, User, Save} from 'lucide-react';
 import useUserContext from '../hooks/contextHooks';
-import ThemeSwitch from './ThemeSwitch';
 
 const Layout = () => {
   const {user} = useUserContext();
@@ -15,13 +14,12 @@ const Layout = () => {
             </span>
             Lens
           </h1>
-          <ThemeSwitch />
         </div>
       </header>
-      <main className="container mx-auto dark:bg bg-gray-900 text-gray-900 rounded-lg mb-4 h-full">
+      <main className="container mx-auto dark:bg dark:bg-gray-900 light:bg-gray-200 text-gray-900 rounded-lg mb-4 h-full">
         <Outlet />
       </main>
-      <footer className="bg-gray-800 text-white text-center p-4 fixed bottom-0 w-full z-10 inset-x-0">
+      <footer className="bg-gray-800 text-white text-center p-4 fixed bottom-0 w-full py-6 z-10 inset-x-0">
         <div>
           <nav>
             <ul className="flex justify-center space-x-10 sm:space-x-14 md:space-x-20 text-lg">
