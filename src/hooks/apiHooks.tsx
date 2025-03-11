@@ -379,6 +379,23 @@ const useUser = () => {
     }
   };
 
+  const deleteUserAsAdmin = async (user_id: number, token: string) => {
+    try {
+      const options = {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      return await fetchData<MessageResponse>(
+        import.meta.env.VITE_AUTH_API + '/users/' + user_id,
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
   return {
     getUser,
     postRegister,
@@ -387,6 +404,7 @@ const useUser = () => {
     getUserByUserId,
     putUserBioAndUsername,
     deleteUser,
+    deleteUserAsAdmin,
   };
 };
 

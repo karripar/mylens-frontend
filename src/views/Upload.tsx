@@ -1,22 +1,24 @@
-import { ChangeEvent, useRef, useState, KeyboardEvent } from 'react';
-import { useForm } from '../hooks/formHooks';
-import { useFile, useMedia, useTags } from '../hooks/apiHooks';
+import {ChangeEvent, useRef, useState, KeyboardEvent} from 'react';
+import {useForm} from '../hooks/formHooks';
+import {useFile, useMedia, useTags} from '../hooks/apiHooks';
 import useUserContext from '../hooks/contextHooks';
+import {SendHorizonal} from 'lucide-react';
 
 const Upload = () => {
   const [uploading, setUploading] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
   const [tags, setTags] = useState<string[]>([]);
+  const tagInputRef = useRef<HTMLInputElement>(null);
 
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploadResult, setUploadResult] = useState<string>('');
 
-  const { postFile } = useFile();
-  const { postMedia } = useMedia();
-  const { postTags } = useTags();
-  const initValues = { title: '', description: '' };
+  const {postFile} = useFile();
+  const {postMedia} = useMedia();
+  const {postTags} = useTags();
+  const initValues = {title: '', description: ''};
 
-  const { user } = useUserContext();
+  const {user} = useUserContext();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -28,6 +30,13 @@ const Upload = () => {
   const addTag = (tag: string) => {
     if (tag.trim() && !tags.includes(tag.trim())) {
       setTags([...tags, tag.trim()]);
+    }
+  };
+
+  const handleTagButtonClick = () => {
+    if (tagInputRef.current) {
+      addTag(tagInputRef.current.value);
+      tagInputRef.current.value = '';
     }
   };
 
@@ -81,7 +90,7 @@ const Upload = () => {
     }
   };
 
-  const { handleSubmit, handleInputChange, inputs, setInputs } = useForm(
+  const {handleSubmit, handleInputChange, inputs, setInputs} = useForm(
     doUpload,
     initValues,
   );
@@ -154,7 +163,10 @@ const Upload = () => {
                   )}
                 </label>
                 <div className="relative">
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="title"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Title
                   </label>
                   <input
@@ -168,7 +180,10 @@ const Upload = () => {
                   />
                 </div>
                 <div className="relative">
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="description"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Description
                   </label>
                   <textarea
@@ -181,7 +196,10 @@ const Upload = () => {
                   ></textarea>
                 </div>
                 <div className="relative">
-                  <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="tags"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Tags
                   </label>
                   <input
@@ -189,8 +207,14 @@ const Upload = () => {
                     name="tags"
                     type="text"
                     id="tags"
+                    maxLength={50}
+                    ref={tagInputRef}
                     onKeyDown={handleTagsChange}
                     placeholder="Enter tags (press Enter to add)"
+                  />
+                  <SendHorizonal
+                    onClick={handleTagButtonClick}
+                    className="absolute right-4 top-10 h-6 w-6 text-gray-700 hover:opacity-75"
                   />
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -212,7 +236,11 @@ const Upload = () => {
                           viewBox="0 0 24 24"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                          ></path>
                         </svg>
                       </button>
                     </span>
@@ -221,6 +249,7 @@ const Upload = () => {
                 <button
                   type="submit"
                   onClick={handleSubmit}
+                  disabled={uploading || !file || !inputs.title.trim()}
                   className="w-full mt-4 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition duration-200"
                 >
                   {uploading ? 'Uploading...' : 'Upload'}
@@ -233,19 +262,22 @@ const Upload = () => {
                   Reset
                 </button>
 
-                <p className="mt-2 text-center text-sm text-gray-600">{uploadResult}</p>
-
+                <p className="mt-2 text-center text-sm text-gray-600">
+                  {uploadResult}
+                </p>
               </form>
             </div>
           </div>
         </>
       ) : (
         <div className="flex h-3/4 items-center justify-center">
-          <h1 className="text-3xl font-semibold text-white">Please log in to upload media</h1>
+          <h1 className="text-3xl font-semibold text-white">
+            Please log in to upload media
+          </h1>
         </div>
       )}
     </>
   );
-}
+};
 
 export default Upload;

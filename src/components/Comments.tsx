@@ -11,6 +11,8 @@ import {formatDate} from '../lib/functions';
 import {CommentWithReplies, CommentWithUsername} from 'hybrid-types/DBTypes';
 import {useNavigate} from 'react-router-dom';
 
+
+
 const Comments = ({item}: {item: MediaItemWithOwner}) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const {user} = useUserContext();
@@ -166,6 +168,7 @@ const Comments = ({item}: {item: MediaItemWithOwner}) => {
             onClick={() => {
               setReplyToCommentId(comment.comment_id);
               setInputs({comment_text: `@${comment.username} `}); // Set the input with @username
+
             }}
             className="text-amber-300 hover:text-amber-500 cursor-pointer transition-colors duration-200 ease-in-out px-2 py-1 text-sm font-medium"
           >

@@ -69,14 +69,14 @@ const Single = () => {
       </button>
 
       {/* Main Content Container */}
-      <div className="w-full max-w-3xl bg-gray-800 p-6 rounded-lg shadow-lg">
+      <div className="w-full max-w-2xl flex-col bg-gray-800 p-6 rounded-lg shadow-lg">
         {/* Title */}
         <h2 className="text-3xl font-bold text-white text-center mb-6">
           {item.title}
         </h2>
 
         {/* Media Display */}
-        <div className="relative w-full border-2 border-stone-600 rounded-lg overflow-hidden shadow-md">
+        <div className="relative max-w-3/4 border-2 flex m-auto border-stone-600 rounded-lg overflow-hidden shadow-md">
           {item.media_type.includes('video') ? (
             <video
               controls
