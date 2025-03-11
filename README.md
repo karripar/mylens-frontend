@@ -36,7 +36,7 @@
 
 
 
-## Tekniset vaatimukset:
+## Tekninen toteutus:
 
 - **Frontend:** React ja TypeScript.
 - **Backend:** Node.js ja Express (RESTful-arkkitehtuuri).
@@ -45,6 +45,13 @@
 - **Autentikointi:** Käyttäjien rekisteröinti ja kirjautuminen (JWT).
 - **Responsiivinen käyttöliittymä:** Tailwind CSS
 - **Progressiivinen web-sovellus:** Vite PWA toiminnallisuus.
+
+## Kolmannen osapuolen kirjastot ja lisäosat:
+
+- **[Lucide React](https://lucide.dev/guide/):** Vapaasti käytettävä ikonikirjasto Reactille.
+- **[FFmpeg](https://www.ffmpeg.org/about.html):** Multimedia framework mediatiedostojen käsittelylle taustapalvelussa.
+- **[Zustand](https://zustand.docs.pmnd.rs/getting-started/introduction):** Kommenttien, tykkäysten ja suosikkien tilan ja arvojen varastoimiseen sekä käsittelyyn.
+
 
 ---
 
