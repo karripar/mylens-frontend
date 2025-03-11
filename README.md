@@ -21,6 +21,7 @@
 ### 2. Materiaalin jakaminen:
 - Käyttäjät voivat ladata ja jakaa mediatiedostoja, eli kuvia ja videoita.
 - Mahdollisuus lisätä kuvauksia ja tageja (esim. aihe), jotta materiaalin löytäminen olisi helpompaa.
+- Julkaisussa olevaa tagia klikkaamalla tai oikeaan osoitteeseen navigoimalla saa esiin kaikki saman tagin sisältävät julkaisut.
 
 ### 3. Haku ja suodatus:
 - Materiaalit voidaan etsiä hakusanojen, nimen, aiheen tai tagien avulla.
@@ -84,7 +85,7 @@
 | **password_hash** | VARCHAR(255) | not null  |  | |
 | **email** | VARCHAR(255) | not null , unique |  | |
 | **bio** | TEXT(65535) | not null  |  | |
-| **user_level_id** | INTEGER | not null  | fk_Users_user_level_id_UserLevels | |
+| **user_level_id** | INTEGER | not null  | Users.user_level_id | |
 | **created_at** | TIMESTAMP | not null  |  | |
 
 
@@ -101,7 +102,7 @@
 | Name        | Type          | Settings                      | References                    | Note                           |
 |-------------|---------------|-------------------------------|-------------------------------|--------------------------------|
 | **profile_picture_id** | INTEGER | 🔑 PK, not null , unique, autoincrement |  | |
-| **user_id** | INTEGER | not null  | fk_ProfilePictures_user_id_Users | |
+| **user_id** | INTEGER | not null  | Users.user_id | |
 | **filename** | VARCHAR(255) | not null  |  | |
 | **media_type** | VARCHAR(255) | not null  |  | |
 | **filesize** | INTEGER | not null  |  | |
@@ -113,7 +114,7 @@
 | Name        | Type          | Settings                      | References                    | Note                           |
 |-------------|---------------|-------------------------------|-------------------------------|--------------------------------|
 | **media_id** | INTEGER | 🔑 PK, not null , unique, autoincrement |  | |
-| **user_id** | INTEGER | not null  | fk_MediaItems_user_id_Users | |
+| **user_id** | INTEGER | not null  | Users.user_id | |
 | **filename** | VARCHAR(255) | not null  |  | |
 | **thumbnail** | VARCHAR(255) | not null  |  | |
 | **filesize** | INTEGER | not null  |  | |
@@ -136,8 +137,8 @@
 | Name        | Type          | Settings                      | References                    | Note                           |
 |-------------|---------------|-------------------------------|-------------------------------|--------------------------------|
 | **media_tag_id** | INTEGER | 🔑 PK, not null , unique, autoincrement |  | |
-| **media_id** | INTEGER | not null  | fk_MediaTags_media_id_MediaItems | |
-| **tag_id** | INTEGER | not null  | fk_MediaTags_tag_id_Tags | |
+| **media_id** | INTEGER | not null  | MediaItems.media_id | |
+| **tag_id** | INTEGER | not null  | Tags.tag_id | |
 
 
 ### Comments
@@ -145,10 +146,10 @@
 | Name        | Type          | Settings                      | References                    | Note                           |
 |-------------|---------------|-------------------------------|-------------------------------|--------------------------------|
 | **comment_id** | INTEGER | 🔑 PK, not null , unique, autoincrement |  | |
-| **media_id** | INTEGER | not null  | fk_Comments_media_id_MediaItems | |
-| **user_id** | INTEGER | not null  | fk_Comments_user_id_Users | |
+| **media_id** | INTEGER | not null  | MediaItems.media_id | |
+| **user_id** | INTEGER | not null  | Users.user_id | |
 | **comment_text** | TEXT(65535) | not null  |  | |
-| **reference_comment_id** | INTEGER | not null  | fk_Comments_reference_comment_id_Comments | |
+| **reference_comment_id** | INTEGER | not null  | Comments.comment_id | |
 | **created_at** | TIMESTAMP | not null  |  | |
 
 
@@ -157,8 +158,8 @@
 | Name        | Type          | Settings                      | References                    | Note                           |
 |-------------|---------------|-------------------------------|-------------------------------|--------------------------------|
 | **like_id** | INTEGER | 🔑 PK, not null , unique, autoincrement |  | |
-| **media_id** | INTEGER | not null  | fk_Likes_media_id_MediaItems | |
-| **user_id** | INTEGER | not null  | fk_Likes_user_id_Users | |
+| **media_id** | INTEGER | not null  | MediaItems.media_id | |
+| **user_id** | INTEGER | not null  | Users.user_id | |
 | **created_at** | TIMESTAMP | not null  |  | |
 
 
@@ -167,8 +168,8 @@
 | Name        | Type          | Settings                      | References                    | Note                           |
 |-------------|---------------|-------------------------------|-------------------------------|--------------------------------|
 | **follow_id** | INTEGER | 🔑 PK, not null , unique, autoincrement |  | |
-| **follower_id** | INTEGER | not null  | fk_Follows_follower_id_Users | |
-| **followed_id** | INTEGER | not null  | fk_Follows_followed_id_Users | |
+| **follower_id** | INTEGER | not null  | Users.user_id | |
+| **followed_id** | INTEGER | not null  | Users.user_id | |
 | **created_at** | TIMESTAMP | not null  |  | |
 
 
@@ -177,8 +178,8 @@
 | Name        | Type          | Settings                      | References                    | Note                           |
 |-------------|---------------|-------------------------------|-------------------------------|--------------------------------|
 | **favorite_id** | INTEGER | 🔑 PK, not null , unique, autoincrement |  | |
-| **user_id** | INTEGER | not null  | fk_Favorites_user_id_Users | |
-| **media_id** | INTEGER | not null  | fk_Favorites_media_id_MediaItems | |
+| **user_id** | INTEGER | not null  | Users.user_id | |
+| **media_id** | INTEGER | not null  | MediaItems.media_id | |
 | **created_at** | TIMESTAMP | not null  |  | |
 
 
