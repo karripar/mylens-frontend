@@ -15,7 +15,7 @@ const Comments = ({item}: {item: MediaItemWithOwner}) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const {user} = useUserContext();
   const {comments, setComments} = useCommentStore();
-  const {postComment, getCommentsByMediaId} = useComment();
+  const {postComment, getCommentsByMediaId, deleteComment} = useComment();
   const [replyToCommentId, setReplyToCommentId] = useState<number | null>(null);
   const navigate = useNavigate();
 
@@ -93,6 +93,21 @@ const Comments = ({item}: {item: MediaItemWithOwner}) => {
     }
   };
 
+  const handleDelete = async (commentId: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
+
+      await deleteComment(commentId, token);
+      const response = await getCommentsByMediaId(item.media_id);
+      if (!response) return;
+
+      setComments(groupComments(response));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const groupComments = (
     comments: CommentWithUsername[] = [],
   ): CommentWithUsernameAndReplies[] => {
@@ -157,6 +172,14 @@ const Comments = ({item}: {item: MediaItemWithOwner}) => {
             ↳ Reply
           </button>
         )}
+        {user && user.level_name === 'Admin' && (
+              <button
+                onClick={() => handleDelete(comment.comment_id)}
+                className="text-red-500 hover:text-amber-500 cursor-pointer transition-colors duration-200 ease-in-out px-2 py-1 text-sm font-medium"
+              >
+                Delete
+              </button>
+            )}
 
         {replyToCommentId === comment.comment_id && (
           <form
@@ -178,6 +201,7 @@ const Comments = ({item}: {item: MediaItemWithOwner}) => {
             >
               Reply
             </button>
+
           </form>
         )}
 

@@ -1,28 +1,38 @@
-import {ChangeEvent, useRef, useState} from 'react';
-import {useForm} from '../hooks/formHooks';
-import {useFile, useMedia, useTags} from '../hooks/apiHooks';
+import { ChangeEvent, useRef, useState, KeyboardEvent } from 'react';
+import { useForm } from '../hooks/formHooks';
+import { useFile, useMedia, useTags } from '../hooks/apiHooks';
 import useUserContext from '../hooks/contextHooks';
 
 const Upload = () => {
   const [uploading, setUploading] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
-  const [tags, setTags] = useState<string>('');
+  const [tags, setTags] = useState<string[]>([]);
 
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploadResult, setUploadResult] = useState<string>('');
 
-  const {postFile} = useFile();
-  const {postMedia} = useMedia();
-  const {postTags} = useTags();
-  const initValues = {title: '', description: ''};
+  const { postFile } = useFile();
+  const { postMedia } = useMedia();
+  const { postTags } = useTags();
+  const initValues = { title: '', description: '' };
 
-  const {user} = useUserContext();
+  const { user } = useUserContext();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       console.log(event.target.files[0]);
       setFile(event.target.files[0]);
     }
+  };
+
+  const addTag = (tag: string) => {
+    if (tag.trim() && !tags.includes(tag.trim())) {
+      setTags([...tags, tag.trim()]);
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const doUpload = async () => {
@@ -43,18 +53,14 @@ const Upload = () => {
       const mediaResponse = await postMedia(fileResponse, inputs, token);
 
       const mediaId = mediaResponse.media_id;
-      const tagList = (tags || '')
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter((tag) => tag.length > 0); // Remove empty tags from list
 
-      if (tagList.length > 0) {
-        await postTags(tagList, mediaId, token);
+      if (tags.length > 0) {
+        await postTags(tags, mediaId, token);
       }
 
       setUploadResult('Upload successful');
       setFile(null);
-      setTags('');
+      setTags([]);
       setInputs(initValues);
     } catch (error) {
       console.error((error as Error).message);
@@ -62,7 +68,7 @@ const Upload = () => {
     } finally {
       setUploading(false);
       setFile(null);
-      setTags('');
+      setTags([]);
       setInputs(initValues);
     }
   };
@@ -75,13 +81,18 @@ const Upload = () => {
     }
   };
 
-  const {handleSubmit, handleInputChange, inputs, setInputs} = useForm(
+  const { handleSubmit, handleInputChange, inputs, setInputs } = useForm(
     doUpload,
     initValues,
   );
 
-  const handleTagsChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTags(event.target.value);
+  const handleTagsChange = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const input = event.currentTarget;
+      addTag(input.value);
+      input.value = '';
+    }
   };
 
   return (
@@ -89,15 +100,11 @@ const Upload = () => {
       {user ? (
         <>
           <div className="flex h-3/4 p-5 items-center justify-center">
-            <div className="w-full max-w-md rounded-2xl bg-stone-950/80 p-6 shadow-2xl backdrop-blur-md ring-1 ring-stone-700">
-              {/* Header */}
+            <div className="w-full max-w-md rounded-2xl bg-stone-950/80 p-6 shadow-2xl backdrop-blur-md ring-1 mb-10 ring-stone-700">
               <h1 className="mb-4 text-center text-3xl font-semibold text-white">
                 Upload Media
               </h1>
-
-              {/* Upload Form */}
               <form className="space-y-6 rounded-xl bg-white p-8 shadow-xl">
-                {/* File Upload Section */}
                 <label
                   htmlFor="file"
                   className="relative flex h-52 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-100 p-6 text-center text-gray-600 transition duration-200 hover:border-amber-500 hover:bg-gray-50"
@@ -146,13 +153,8 @@ const Upload = () => {
                     </>
                   )}
                 </label>
-
-                {/* Title Input */}
                 <div className="relative">
-                  <label
-                    htmlFor="title"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                     Title
                   </label>
                   <input
@@ -165,13 +167,8 @@ const Upload = () => {
                     placeholder="Enter a title..."
                   />
                 </div>
-
-                {/* Description Input */}
                 <div className="relative">
-                  <label
-                    htmlFor="description"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                     Description
                   </label>
                   <textarea
@@ -183,96 +180,72 @@ const Upload = () => {
                     placeholder="Write a description..."
                   ></textarea>
                 </div>
-
-                {/* Tags Input */}
                 <div className="relative">
-                  <label
-                    htmlFor="tags"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Tags (comma separated)
+                  <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
+                    Tags
                   </label>
                   <input
                     className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition duration-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500"
                     name="tags"
                     type="text"
                     id="tags"
-                    onChange={handleTagsChange}
-                    value={tags}
-                    placeholder="Enter tags (comma separated)"
+                    onKeyDown={handleTagsChange}
+                    placeholder="Enter tags (press Enter to add)"
                   />
                 </div>
-
-                {/* Buttons */}
-                <div className="flex items-center justify-between gap-4">
-                  <button
-                    className={`flex-1 rounded-lg px-5 py-3 font-medium text-white transition duration-200 ${
-                      file &&
-                      inputs.title.length > 3 &&
-                      inputs.description.length > 0
-                        ? 'bg-amber-500 hover:bg-amber-600 shadow-lg'
-                        : 'cursor-not-allowed bg-gray-400'
-                    }`}
-                    onClick={handleSubmit}
-                    type="submit"
-                    disabled={
-                      !file ||
-                      inputs.title.length <= 3 ||
-                      inputs.description.length === 0
-                    }
-                  >
-                    {uploading ? 'Uploading...' : 'Upload'}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={resetForm}
-                    className="flex-1 rounded-lg bg-gray-200 px-5 py-3 font-medium text-gray-700 transition duration-200 hover:bg-gray-300 hover:shadow-md"
-                  >
-                    Reset
-                  </button>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="ml-2 h-4 w-4 text-gray-700 hover:text-gray-900"
+                      >
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                      </button>
+                    </span>
+                  ))}
                 </div>
+                <button
+                  type="submit"
+                  onClick={handleSubmit}
+                  className="w-full mt-4 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition duration-200"
+                >
+                  {uploading ? 'Uploading...' : 'Upload'}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="w-full mt-4 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 rounded-lg transition duration-200"
+                >
+                  Reset
+                </button>
 
-                {/* Upload Result */}
-                {uploadResult && (
-                  <p className="mt-4 text-center text-sm font-medium text-gray-600">
-                    {uploadResult}
-                  </p>
-                )}
+                <p className="mt-2 text-center text-sm text-gray-600">{uploadResult}</p>
+
               </form>
             </div>
           </div>
         </>
       ) : (
-        <>
-          <div className="flex h-3/4 my-10 items-center justify-center ">
-            <div className="w-full max-w-lg rounded-2xl p-8 shadow-xl backdrop-blur-md">
-              <h1 className="mb-6 text-center text-4xl font-bold text-gray-200">
-                Please log in to upload media
-              </h1>
-              <div className="flex justify-center">
-                <p className="text-center text-lg text-gray-300">
-                  To upload your content, please log in to your account. <br />
-                  New here? <span className="text-amber-400">Sign up</span>{' '}
-                  today!
-                </p>
-              </div>
-              <div className="mt-8 flex justify-center">
-                <button
-                  className="px-6 py-3 text-lg font-semibold text-white transition-all transform bg-amber-600 rounded-lg shadow-md hover:bg-amber-700 focus:ring-4 focus:ring-amber-500 focus:ring-opacity-50"
-                  onClick={() => {
-                    window.location.href = '/user';
-                  }}
-                >
-                  Log In
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
+        <div className="flex h-3/4 items-center justify-center">
+          <h1 className="text-3xl font-semibold text-white">Please log in to upload media</h1>
+        </div>
       )}
     </>
   );
-};
+}
 
 export default Upload;

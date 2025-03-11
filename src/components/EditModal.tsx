@@ -62,7 +62,7 @@ const EditMediaModal = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center text-white w-96">
         <h3 className="text-xl font-bold mb-4">Edit Media</h3>
         {error && <p className="text-red-400 mb-2">{error}</p>}

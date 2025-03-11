@@ -435,7 +435,24 @@ const useComment = () => {
     }
   };
 
-  return {postComment, getCommentsByMediaId};
+  const deleteComment = async (comment_id: number, token: string) => {
+    try {
+      const options = {
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+      return await fetchData<MessageResponse>(
+        import.meta.env.VITE_MEDIA_API + '/comments/' + comment_id,
+        options,
+      );
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  };
+
+  return {postComment, getCommentsByMediaId, deleteComment};
 };
 
 const useLike = () => {
