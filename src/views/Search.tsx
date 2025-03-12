@@ -10,7 +10,7 @@ import useUserContext from '../hooks/contextHooks';
 import Follows from '../components/Follows';
 import Likes from '../components/Likes';
 import {MessageCircle} from 'lucide-react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router';
 import {useProfilePicture} from '../hooks/apiHooks';
 
 const searchOptions = [

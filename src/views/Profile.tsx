@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import useUserContext from '../hooks/contextHooks';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router';
 import {
   useFile,
   useFollow,
@@ -20,6 +20,8 @@ const Profile = () => {
   const {getProfilePicture, putProfilePicture} = useProfilePicture();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const {postProfileFile} = useFile();
+  const [bio, setBio] = useState<string>(user?.bio || '');
+  const [username, setUsername] = useState<string>(user?.username || '');
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>(true);
   const [profilePicture, setProfilePicture] = useState<ProfilePicture | null>(
     null,
@@ -143,6 +145,8 @@ const Profile = () => {
       setIsEditing(false);
       setIsEditingUsername(false);
       setIsEditingBio(false);
+      setBio(inputs.bio);
+      setUsername(inputs.username);
     } catch (error) {
       console.error((error as Error).message);
     }
@@ -208,12 +212,12 @@ const Profile = () => {
 
           {/* Username */}
           <h2 className="text-3xl font-bold break-all text-gray-800">
-            {user?.username}
+            {username}
           </h2>
 
           {/* User Role */}
           <p className="text-gray-600 text-lg">{user?.level_name}</p>
-          <p className="text-gray-500 text-sm">{user?.bio}</p>
+          <p className="text-gray-500 text-sm">{bio}</p>
           {/* Media or Posts Section */}
           <div className="flex space-x-6">
             <div className="text-center">

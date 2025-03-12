@@ -1,4 +1,4 @@
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router';
 import {useSavedMedia} from '../hooks/apiHooks';
 import {useEffect} from 'react';
 

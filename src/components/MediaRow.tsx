@@ -1,5 +1,5 @@
 import {MediaItemWithProfilePicture} from 'hybrid-types/DBTypes';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router';
 import useUserContext from '../hooks/contextHooks';
 import {MessageCircle} from 'lucide-react';
 import Likes from './Likes';

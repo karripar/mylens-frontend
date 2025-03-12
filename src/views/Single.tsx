@@ -1,5 +1,5 @@
 import {MediaItemWithOwner} from 'hybrid-types/DBTypes';
-import {NavigateFunction, useLocation, useNavigate} from 'react-router-dom';
+import {NavigateFunction, useLocation, useNavigate} from 'react-router';
 import Comments from '../components/Comments';
 import Likes from '../components/Likes';
 import {ArrowLeft} from 'lucide-react';
@@ -79,6 +79,8 @@ const Single = () => {
         <div className="relative max-w-3/4 border-2 flex m-auto border-stone-600 rounded-lg overflow-hidden shadow-md">
           {item.media_type.includes('video') ? (
             <video
+              controlsList='nodownload'
+              onContextMenu={(e) => e.preventDefault()}
               controls
               src={item.filename}
               crossOrigin="anonymous"

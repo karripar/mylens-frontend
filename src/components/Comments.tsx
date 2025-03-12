@@ -9,7 +9,7 @@ import {
 import {useComment} from '../hooks/apiHooks';
 import {formatDate} from '../lib/functions';
 import {CommentWithReplies, CommentWithUsername} from 'hybrid-types/DBTypes';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router';
 
 
 

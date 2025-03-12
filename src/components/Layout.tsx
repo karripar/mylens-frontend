@@ -1,4 +1,4 @@
-import {Link, Outlet} from 'react-router-dom';
+import {Link, Outlet} from 'react-router';
 import {House, Search, Plus, User, Save} from 'lucide-react';
 import useUserContext from '../hooks/contextHooks';
 

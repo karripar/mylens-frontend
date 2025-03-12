@@ -1,10 +1,9 @@
-import {useParams} from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router';
 import {useMedia, useProfilePicture} from '../hooks/apiHooks';
 import {useEffect, useState} from 'react';
 import {MediaItemWithOwner} from 'hybrid-types/DBTypes';
 import useUserContext from '../hooks/contextHooks';
 import Follows from '../components/Follows';
-import {useNavigate} from 'react-router-dom';
 import Likes from '../components/Likes';
 import {MessageCircle} from 'lucide-react';
 

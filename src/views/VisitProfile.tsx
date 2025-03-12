@@ -1,4 +1,4 @@
-import {useParams} from 'react-router-dom';
+import {useParams} from 'react-router';
 import {useEffect, useState} from 'react';
 import {ProfilePicture, UserWithNoPassword} from 'hybrid-types/DBTypes';
 import {fetchData} from '../lib/functions';
@@ -8,7 +8,7 @@ import {
   useProfilePicture,
   useUser,
 } from '../hooks/apiHooks';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router';
 import Follows from '../components/Follows';
 import useUserContext from '../hooks/contextHooks';
 import {ArrowLeft} from 'lucide-react';

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useAuthentication, useUser} from '../hooks/apiHooks';
 import {UserWithProfilePicture} from 'hybrid-types/DBTypes';
 import {Credentials} from '../types/localTypes';
-import {useNavigate, useLocation} from 'react-router-dom';
+import {useNavigate, useLocation} from 'react-router';
 import UserContext from './UserContext'; // Import the context
 
 const UserProvider = ({children}: {children: React.ReactNode}) => {
@@ -28,8 +28,8 @@ const UserProvider = ({children}: {children: React.ReactNode}) => {
       const userResponse = await getUser(response.token);
       setUser({
         ...userResponse.user,
-        profile_picture:
-          (userResponse.user as UserWithProfilePicture).profile_picture || '',
+        filename:
+          (userResponse.user as UserWithProfilePicture).filename || '',
       });
       navigate('/');
     } catch (error) {
@@ -56,8 +56,8 @@ const UserProvider = ({children}: {children: React.ReactNode}) => {
       const userResponse = await getUser(token);
       setUser({
         ...userResponse.user,
-        profile_picture:
-          (userResponse.user as UserWithProfilePicture).profile_picture || '',
+        filename:
+          (userResponse.user as UserWithProfilePicture).filename || '',
       });
 
       const origin = location.state?.from?.pathname || '/';
