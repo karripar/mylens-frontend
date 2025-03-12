@@ -13,18 +13,18 @@ export default defineConfig({
       devOptions: {enabled: true},
       workbox: {
         maximumFileSizeToCacheInBytes: 5000000, // 5MB
-        globPatterns: ["**/*.{js,css,html,ico,png,jpg,jpeg,svg,ttf,json, jsx}"],
+        globPatterns: ["**/*.{js,css,html,ico,png,jpg,jpeg,svg,ttf,json,jsx}"],
       },
       includeAssets: [
         'App.css',
+        'app-icon.png',
         'favicon.ico',
-        'logo192.png',
-        'logo512.png',
+        'app-icon.svg',
         'index.css',
       ],
       manifest: {
-        name: 'MyLens',
-        short_name: 'MyLens',
+        name: 'mylens',
+        short_name: 'mylens',
         description: 'A social media platform',
         theme_color: '#ffffff',
         icons: [
