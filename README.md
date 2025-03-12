@@ -71,6 +71,8 @@
 
 - API-kutsut eivät toimi mobiililaitteella tuntemattomasta syystä. Cors-asetukset ovat päällä ja rajoituksia ei pitäisi olla. USB-debuggausta on kokeiltu puhelimella mutta konsoliin ei ilmesty virheviestejä ja network-osiossa näkyy vain "waiting" kutsuissa ilman vastausta.
 
+- Service Worker toimii normaalisti, sovellusta ei kuitenkaan saa lisättyä aloitusnäyttöön ainakaan tietokoneella.
+
 - Alkuperäisestä suunnitelmasta poiketen ilmoitukset ei ole käytössä vaikka niille tehtiinkin endpointit.
 
 ## Tekninen toteutus:
