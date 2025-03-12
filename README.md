@@ -95,6 +95,10 @@
 
 - Tekoälyä käytetty etenkin logiikkaan jolla sai indeksoitua kommentit ja asetettua ne oikeiden isäntäkommenttien alle. Eli vastaukset oikeiden kommenttien alle.
 
+## Referenssit:
+- **[FFmpegin asennus Windowsille, ongelma tiedostojen polussa](https://www.wikihow.com/Install-FFmpeg-on-Windows)**
+- **[FFmpegin asennus Linux virtuaalikoneelle (Fedora)](https://www.cyberciti.biz/faq/how-to-install-ffmpeg-on-fedora-linux-using-dnf/)**: Asennus vaatii hieman kikkailua. Asenna ohjeiden mukaan ja katso upload-serverin makeVideoThumbnail.ts tiedostosta kuinka asettaa polku ffmpeg ja ffprobe tiedostoille. Luonnollisesti Linux-ympäristössä on oma polkunsa --> '/bin/jaadajaada' jne. Ilman polkujen määrittämistä ffmpeg ei löytänyt ffprobea.
+
 ---
 
 ## Tietokannan kuvaus:
