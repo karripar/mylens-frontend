@@ -89,6 +89,7 @@
 - **[Robohash](https://robohash.org/):** Oletusprofiilikuvat käyttäjille.
 - **[FFmpeg](https://www.ffmpeg.org/about.html):** Multimedia framework mediatiedostojen käsittelylle taustapalvelussa.
 - **[Zustand](https://zustand.docs.pmnd.rs/getting-started/introduction):** Kommenttien, tykkäysten ja suosikkien tilan ja arvojen varastoimiseen sekä käsittelyyn.
+- **[DrawDB](https://www.drawdb.app/):** Tietokantamallin piirtämistä ja havainnollistamista varten.
 
 - Tekoälyä käytetty etenkin logiikkaan jolla sai indeksoitua kommentit ja asetettua ne oikeiden isäntäkommenttien alle. Eli vastaukset oikeiden kommenttien alle.
 

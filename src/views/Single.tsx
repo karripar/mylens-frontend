@@ -144,8 +144,9 @@ const Single = () => {
             </>
           )}
 
+
           {/* Delete Button */}
-          {user && user.user_id === item.user_id && (
+          {(user?.user_id === item.user_id || user?.level_name === 'Admin')  && (
             <div className="mt-6 p-4 bg-gray-700 flex gap-10 justify-center rounded-lg">
               <button
                 onClick={() => setShowConfirmDelete(true)}

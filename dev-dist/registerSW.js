@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/~karripar/mylens/dist/dev-sw.js?dev-sw', { scope: '/~karripar/mylens/dist/', type: 'classic' })
